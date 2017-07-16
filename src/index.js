@@ -14,12 +14,12 @@ const isDefined = (value) => value !== undefined
 const isError = (value) => (value || false) instanceof Error
 const isPayload = (value) => isDefined(value) && value !== null
 
-const hasExplicitPromise = ({ promise: explicit } = {}) => isPromise(explicit)
-const hasImplicitPromise = (implicit) => isPromise(implicit)
+const hasExplicitPromise = ({ promise } = {}) => isPromise(promise)
+const hasImplicitPromise = (promise) => isPromise(promise)
 const hasPromise = (object) => hasImplicitPromise(object) || hasExplicitPromise(object)
 
 const getExplicitPromise = ({ promise, ...rest }) => ({ ...rest, promise })
-const getImplicitPromise = (implicit) => ({ promise: implicit })
+const getImplicitPromise = (promise) => ({ promise })
 const getPromise = (object) => hasImplicitPromise(object) ? getImplicitPromise(object) : getExplicitPromise(object)
 
 /**
