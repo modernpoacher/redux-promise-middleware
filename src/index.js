@@ -1,106 +1,82 @@
-import isPromise from './isPromise';
+import { isPromiseLike as isPromise } from 'is-promise-like'
 
-export const PENDING = 'PENDING';
-export const FULFILLED = 'FULFILLED';
-export const REJECTED = 'REJECTED';
+export const PENDING = 'PENDING'
+export const FULFILLED = 'FULFILLED'
+export const REJECTED = 'REJECTED'
 
-const defaultTypes = [PENDING, FULFILLED, REJECTED];
+const defaultTypes = [
+  PENDING,
+  FULFILLED,
+  REJECTED
+]
+
+const isDefined = (value) => value !== undefined
+const isError = (value) => (value || false) instanceof Error
+const isPayload = (value) => isDefined(value) && value !== null
+
+const hasExplicitPromise = ({ promise: explicit } = {}) => isPromise(explicit)
+const hasImplicitPromise = (implicit) => isPromise(implicit)
+const hasPromise = (object) => hasImplicitPromise(object) || hasExplicitPromise(object)
+
+const getExplicitPromise = ({ promise, ...rest }) => ({ ...rest, promise })
+const getImplicitPromise = (implicit) => ({ promise: implicit })
+const getPromise = (object) => hasImplicitPromise(object) ? getImplicitPromise(object) : getExplicitPromise(object)
 
 /**
  * @function promiseMiddleware
  * @description
  * @returns {function} thunk
  */
-export default function promiseMiddleware(config = {}) {
-  const promiseTypeSuffixes = config.promiseTypeSuffixes || defaultTypes;
-
-  return ref => {
-    const { dispatch } = ref;
-
-    return next => action => {
-      if (action.payload) {
-        if (!isPromise(action.payload) && !isPromise(action.payload.promise)) {
-          return next(action);
-        }
-      } else {
-        return next(action);
-      }
-
-      // Deconstruct the properties of the original action object to constants
-      const { type, payload, meta } = action;
-
-      // Assign values for promise type suffixes
+export default function promiseMiddleware ({ types = defaultTypes } = {}) {
+  return ({ dispatch }) => (next) => ({ payload, ...action }) => {
+    if (hasPromise(payload)) {
+      const { type } = action
+      const { promise, data } = getPromise(payload)
       const [
-        _PENDING,
-        _FULFILLED,
-        _REJECTED
-      ] = promiseTypeSuffixes;
+        PENDING_SUFFIX,
+        FULFILLED_SUFFIX,
+        REJECTED_SUFFIX
+      ] = types
 
       /**
        * @function getAction
-       * @description Utility function for creating a rejected or fulfilled
-       * flux standard action object.
+       * @description Create a rejected or fulfilled flux standard action object.
        * @param {boolean} Is the action rejected?
        * @returns {object} action
        */
-      const getAction = (newPayload, isRejected) => ({
-        type: `${type}_${isRejected ? _REJECTED : _FULFILLED}`,
-        ...((newPayload === null || typeof newPayload === 'undefined') ? {} : {
-          payload: newPayload
-        }),
-        ...(meta !== undefined ? { meta } : {}),
-        ...(isRejected ? {
-          error: true
-        } : {})
-      });
+      const getAction = (value, isRejected) => ({
+        ...action,
+        type: isRejected ? `${type}_${REJECTED_SUFFIX}` : `${type}_${FULFILLED_SUFFIX}`,
+        ...(isPayload(value) ? { payload: value } : {}),
+        ...(isRejected ? { error: true } : {})
+      })
 
       /**
-       * Assign values for promise and data variables. In the case the payload
-       * is an object with a `promise` and `data` property, the values of those
-       * properties will be used. In the case the payload is a promise, the
-       * value of the payload will be used and data will be null.
-       */
-      let promise;
-      let data;
-
-      if (!isPromise(action.payload) && typeof action.payload === 'object') {
-        promise = payload.promise;
-        data = payload.data;
-      } else {
-        promise = payload;
-        data = undefined;
-      }
-
-      /**
-       * First, dispatch the pending action. This flux standard action object
+       * Dispatch the pending action. This flux standard action object
        * describes the pending state of a promise and will include any data
        * (for optimistic updates) and/or meta from the original action.
        */
       next({
-        type: `${type}_${_PENDING}`,
-        ...(data !== undefined ? { payload: data } : {}),
-        ...(meta !== undefined ? { meta } : {})
-      });
+        ...action,
+        type: `${type}_${PENDING_SUFFIX}`,
+        ...(isDefined(data) ? { payload: data } : {})
+      })
 
       /*
-       * @function transformFulfill
+       * @function transform
        * @description Transforms a fulfilled value into a success object.
        * @returns {object}
        */
-      const transformFulfill = (value = null) => {
-        const resolvedAction = getAction(value, false);
-        return { value, action: resolvedAction };
-      };
+      const transform = (value) => getAction(value)
 
       /*
        * @function handleReject
        * @description Dispatch the rejected action.
        * @returns {void}
        */
-      const handleReject = reason => {
-        const rejectedAction = getAction(reason, true);
-        dispatch(rejectedAction);
-      };
+      const handleReject = (reason) => {
+        dispatch(getAction(reason, isError(reason)))
+      }
 
       /*
        * @function handleFulfill
@@ -108,12 +84,12 @@ export default function promiseMiddleware(config = {}) {
        * @param successValue The value from transformFulfill
        * @returns {void}
        */
-      const handleFulfill = (successValue) => {
-        dispatch(successValue.action);
-      };
+      const handleFulfill = (action) => {
+        dispatch(action)
+      }
 
       /**
-       * Second, dispatch a rejected or fulfilled action. This flux standard
+       * Dispatch a rejected or fulfilled action. This flux standard
        * action object will describe the resolved state of the promise. In
        * the case of a rejected promise, it will include an `error` property.
        *
@@ -122,28 +98,40 @@ export default function promiseMiddleware(config = {}) {
        * with two properties: (1) the value (if fulfilled) or reason
        * (if rejected) and (2) the flux standard action.
        *
-       * Rejected object:
-       * {
-       *   reason: ...
-       *   action: {
-       *     error: true,
-       *     type: 'ACTION_REJECTED',
-       *     payload: ...
-       *   }
-       * }
-       *
        * Fulfilled object:
        * {
-       *   value: ...
-       *   action: {
-       *     type: 'ACTION_FULFILLED',
-       *     payload: ...
-       *   }
+       *   type: 'ACTION_FULFILLED',
+       *   payload: ...
        * }
+       *
+       * Rejected object:
+       * {
+       *   type: 'ACTION_REJECTED',
+       *   payload: ...,
+       *   error: true
+       * }
+       *
        */
-      const promiseValue = promise.then(transformFulfill);
-      const sideEffects = promiseValue.then(handleFulfill, handleReject);
-      return sideEffects.then(() => promiseValue, () => promiseValue);
-    };
-  };
+      const PROMISE = promise.then(transform)
+
+      return PROMISE
+        .then(handleFulfill, handleReject)
+        .then(() => PROMISE, () => PROMISE)
+    } else {
+      return next(({
+        ...action,
+        ...(isDefined(payload) ? { payload } : {})
+      }))
+    }
+  }
 }
+
+/*
+return promise
+  .then(transform)
+  .then((v) => (
+    Promise.resolve()
+      .then(handleFulfill, handleReject)
+      .then(() => v, () => v)
+  ))
+*/
