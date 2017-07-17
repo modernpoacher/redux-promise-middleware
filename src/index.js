@@ -1,3 +1,5 @@
+/* eslint no-unsafe-finally: 0 */
+
 import { isPromiseLike as isPromise } from 'is-promise-like'
 
 export const PENDING = 'PENDING'
@@ -31,26 +33,13 @@ export default function promiseMiddleware ({ types = defaultTypes } = {}) {
   return ({ dispatch }) => (next) => ({ payload, ...action }) => {
     if (hasPromise(payload)) {
       const { type } = action
-      const promise = getPromise(payload)
       const { data } = payload
       const [
         PENDING_SUFFIX,
         FULFILLED_SUFFIX,
         REJECTED_SUFFIX
       ] = types
-
-      /**
-       * @function getAction
-       * @description Create a rejected or fulfilled flux standard action object.
-       * @param {boolean} Is the action rejected?
-       * @returns {object} action
-       */
-      const getAction = (value, isRejected) => ({
-        ...action,
-        type: isRejected ? `${type}_${REJECTED_SUFFIX}` : `${type}_${FULFILLED_SUFFIX}`,
-        ...(isPayload(value) ? { payload: value } : {}),
-        ...(isRejected ? { error: true } : {})
-      })
+      const promise = getPromise(payload)
 
       /**
        * Dispatch the pending action. This flux standard action object
@@ -63,61 +52,40 @@ export default function promiseMiddleware ({ types = defaultTypes } = {}) {
         ...(isDefined(data) ? { payload: data } : {})
       })
 
-      /*
-       * @function transform
-       * @description Transforms a fulfilled value into a success object.
-       * @returns {object}
-       */
-      const transform = (value) => getAction(value)
-
-      /*
-       * @function handleReject
-       * @description Dispatch the rejected action.
-       * @returns {void}
-       */
-      const handleReject = (reason) => {
-        dispatch(getAction(reason, isError(reason)))
-      }
-
-      /*
-       * @function handleFulfill
-       * @description Dispatch the fulfilled action.
-       * @param successValue The value from transformFulfill
-       * @returns {void}
-       */
-      const handleFulfill = (action) => {
-        dispatch(action)
-      }
-
       /**
-       * Dispatch a rejected or fulfilled action. This flux standard
-       * action object will describe the resolved state of the promise. In
-       * the case of a rejected promise, it will include an `error` property.
-       *
-       * In order to allow proper chaining of actions using `then`, a new
-       * promise is constructed and returned. This promise will resolve
-       * with two properties: (1) the value (if fulfilled) or reason
-       * (if rejected) and (2) the flux standard action.
-       *
-       * Fulfilled object:
-       * {
-       *   type: 'ACTION_FULFILLED',
-       *   payload: ...
-       * }
-       *
-       * Rejected object:
-       * {
-       *   type: 'ACTION_REJECTED',
-       *   payload: ...,
-       *   error: true
-       * }
-       *
+       * @function getAction
+       * @description Create a rejected or fulfilled flux standard action object.
+       * @param {boolean} Is the action rejected?
+       * @returns {object} action
        */
-      const PROMISE = promise.then(transform)
+      const getAction = (payload, isRejected) => ({ // eslint-disable-line
+        ...action,
+        type: isRejected ? `${type}_${REJECTED_SUFFIX}` : `${type}_${FULFILLED_SUFFIX}`,
+        ...(isPayload(payload) ? { payload } : {}),
+        ...(isRejected ? { error: true } : {})
+      })
 
-      return PROMISE
-        .then(handleFulfill, handleReject)
-        .then(() => PROMISE, () => PROMISE)
+      return promise
+        .then((value) => {
+          const action = getAction(value)
+          try {
+            dispatch(action)
+          } catch (error) {
+            void error // throw error
+          } finally {
+            return action
+          }
+        })
+        .catch((reason) => {
+          const action = getAction(reason, isError(reason))
+          try {
+            dispatch(action)
+          } catch (error) {
+            void error // throw error
+          } finally {
+            throw reason // return action
+          }
+        })
     } else {
       return next(({
         ...action,
@@ -126,13 +94,3 @@ export default function promiseMiddleware ({ types = defaultTypes } = {}) {
     }
   }
 }
-
-/*
-return promise
-  .then(transform)
-  .then((v) => (
-    Promise.resolve()
-      .then(handleFulfill, handleReject)
-      .then(() => v, () => v)
-  ))
-*/
