@@ -18,9 +18,9 @@ const hasExplicitPromise = ({ promise } = {}) => isPromise(promise)
 const hasImplicitPromise = (promise) => isPromise(promise)
 const hasPromise = (object) => hasImplicitPromise(object) || hasExplicitPromise(object)
 
-const getExplicitPromise = ({ promise, ...rest }) => ({ ...rest, promise })
-const getImplicitPromise = (promise) => ({ promise })
-const getPromise = (object) => hasImplicitPromise(object) ? getImplicitPromise(object) : getExplicitPromise(object)
+const getExplicitPromise = ({ promise } = {}) => promise
+const getImplicitPromise = (promise) => promise // eslint-disable-line
+const getPromise = (object) => hasImplicitPromise(object) ? object : getExplicitPromise(object)
 
 /**
  * @function promiseMiddleware
@@ -31,7 +31,8 @@ export default function promiseMiddleware ({ types = defaultTypes } = {}) {
   return ({ dispatch }) => (next) => ({ payload, ...action }) => {
     if (hasPromise(payload)) {
       const { type } = action
-      const { promise, data } = getPromise(payload)
+      const promise = getPromise(payload)
+      const { data } = payload
       const [
         PENDING_SUFFIX,
         FULFILLED_SUFFIX,
