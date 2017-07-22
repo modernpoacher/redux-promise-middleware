@@ -6,7 +6,25 @@ export const PENDING = 'PENDING'
 export const FULFILLED = 'FULFILLED'
 export const REJECTED = 'REJECTED'
 
-const defaultTypes = [
+export class PromiseError extends Error {
+  constructor ({ message, name, stack, ...error }, e) {
+    super(message)
+    Reflect
+      .ownKeys(error)
+      .forEach((key) => {
+        this[key] = Reflect.get(error, key)
+      })
+    this.name = `PromiseError(${name})`
+    this.stack = stack
+    if (e) {
+      this.error = new PromiseError(e)
+    }
+  }
+}
+
+const promiseError = (error, e) => new PromiseError(error, e)
+
+const defaultStatus = [
   PENDING,
   FULFILLED,
   REJECTED
@@ -29,68 +47,117 @@ const getPromise = (object) => hasImplicitPromise(object) ? object : getExplicit
  * @description
  * @returns {function} thunk
  */
-export default function promiseMiddleware ({ types = defaultTypes } = {}) {
-  return ({ dispatch }) => (next) => ({ payload, ...action }) => {
-    if (hasPromise(payload)) {
-      const { type } = action
-      const { data } = payload
-      const [
-        PENDING_SUFFIX,
-        FULFILLED_SUFFIX,
-        REJECTED_SUFFIX
-      ] = types
-      const promise = getPromise(payload)
+export default function promiseMiddleware ({ status = defaultStatus, pendingStatus = () => undefined, fulfilledStatus = () => undefined, rejectedStatus = () => undefined } = {}) {
+  const [
+    PENDING_STATUS,
+    FULFILLED_STATUS,
+    REJECTED_STATUS
+  ] = status
 
-      /**
-       * Dispatch the pending action. This flux standard action object
-       * describes the pending state of a promise and will include any data
-       * (for optimistic updates) and/or meta from the original action.
-       */
-      next({
-        ...action,
-        type: `${type}_${PENDING_SUFFIX}`,
-        ...(isDefined(data) ? { payload: data } : {})
+  function pending (type, payload, meta) {
+    return {
+      type: pendingStatus(type, PENDING_STATUS) || `${type}_${PENDING_STATUS}`,
+      ...(isDefined(payload) ? { payload } : {}),
+      ...(isDefined(meta) ? { meta } : {})
+    }
+  }
+
+  function fulfilled (type, payload, meta) {
+    return {
+      type: fulfilledStatus(type, FULFILLED_STATUS) || `${type}_${FULFILLED_STATUS}`,
+      ...(isPayload(payload) ? { payload } : {}),
+      ...(isDefined(meta) ? { meta } : {})
+    }
+  }
+
+  function rejected (type, payload, meta, error) {
+    return {
+      type: rejectedStatus(type, REJECTED_STATUS) || `${type}_${REJECTED_STATUS}`,
+      ...(isPayload(payload) ? { payload } : {}),
+      ...(isDefined(meta) ? { meta } : {}),
+      ...(error ? { error } : {})
+    }
+  }
+
+  function resolved (type, payload, meta) {
+    return {
+      type,
+      ...(isPayload(payload) ? { payload } : {}),
+      ...(isDefined(meta) ? { meta } : {})
+    }
+  }
+
+  return ({ dispatch }) => {
+    const resolvePending = ({ type, data, meta }) => (
+      new Promise((resolve, reject) => {
+        try {
+          const p = dispatch(pending(type, data, meta))
+          return (isPromise(p))
+            ? p.then(resolve).catch(reject)
+            : resolve(p)
+        } catch (e) {
+          reject(e)
+        }
       })
+    )
 
-      /**
-       * @function getAction
-       * @description Create a rejected or fulfilled flux standard action object.
-       * @param {boolean} Is the action rejected?
-       * @returns {object} action
-       */
-      const getAction = (payload, isRejected) => ({ // eslint-disable-line
-        ...action,
-        type: isRejected ? `${type}_${REJECTED_SUFFIX}` : `${type}_${FULFILLED_SUFFIX}`,
-        ...(isPayload(payload) ? { payload } : {}),
-        ...(isRejected ? { error: true } : {})
-      })
-
-      return promise
-        .then((value) => {
-          const action = getAction(value)
-          try {
-            dispatch(action)
-          } catch (error) {
-            void error // throw error
-          } finally {
-            return action
-          }
-        })
-        .catch((reason) => {
-          const action = getAction(reason, isError(reason))
-          try {
-            dispatch(action)
-          } catch (error) {
-            void error // throw error
-          } finally {
-            throw reason // return action
-          }
-        })
-    } else {
-      return next(({
-        ...action,
-        ...(isDefined(payload) ? { payload } : {})
+    const resolveFulfilled = ({ type, data, meta, error }) => (value) => (
+      new Promise((resolve, reject) => {
+        try {
+          const f = dispatch(fulfilled(type, value, meta))
+          return (isPromise(f))
+            ? f.then(resolve).catch(reject)
+            : resolve(f)
+        } catch (e) {
+          reject(e)
+        }
       }))
+      .then(() => resolved(type, value, meta))
+      .catch((r) => promiseError(r, error))
+
+    const resolveRejected = ({ type, data, meta, error }) => (reason) => (
+      new Promise((resolve, reject) => {
+        try {
+          const r = dispatch(rejected(type, reason, meta, isError(reason)))
+          return (isPromise(r))
+            ? r.then(resolve).catch(reject)
+            : resolve(r) // reject(reason))
+        } catch (e) {
+          reject(e)
+        }
+      }))
+      .then(() => reason) // the rejected promise error
+      .catch((r) => promiseError(reason, promiseError(r, error)))
+
+    return (next) => (action) => {
+      const { payload } = action
+
+      if (hasPromise(payload)) {
+        const { type, meta } = action
+        const { data } = payload
+        const promise = getPromise(payload)
+        const state = ({ type, data, meta })
+
+        /**
+         * Dispatch the pending action. This flux standard action object
+         * describes the pending state of a promise and will include any data
+         * (for optimistic updates) and/or meta from the original action.
+         */
+        return resolvePending(state)
+          .then(() => state)
+          .catch((error) => ({ ...state, error }))
+          .then((state) => (
+            promise
+              .then(resolveFulfilled(state))
+              .catch(resolveRejected(state))
+          ))
+          .then((v) => isError(v) ? Promise.reject(v) : next(v))
+      }
+
+      /*
+       *  Fall through
+       */
+      return next(action)
     }
   }
 }
