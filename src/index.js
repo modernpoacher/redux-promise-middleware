@@ -88,46 +88,37 @@ export default function promiseMiddleware ({ status = defaultStatus, pendingStat
   }
 
   return ({ dispatch }) => {
-    const resolvePending = ({ type, data, meta }) => (
-      new Promise((resolve, reject) => {
-        try {
-          const p = dispatch(pending(type, data, meta))
-          return (isPromise(p))
-            ? p.then(resolve).catch(reject)
-            : resolve(p)
-        } catch (e) {
-          reject(e)
-        }
-      })
-    )
+    const resolvePending = ({ type, data, meta }) => {
+      try {
+        return Promise.resolve(dispatch(pending(type, data, meta)))
+      } catch (e) {
+        return Promise.reject(e)
+      }
+    }
 
-    const resolveFulfilled = ({ type, data, meta, error }) => (value) => (
-      new Promise((resolve, reject) => {
-        try {
-          const f = dispatch(fulfilled(type, value, meta))
-          return (isPromise(f))
-            ? f.then(resolve).catch(reject)
-            : resolve(f)
-        } catch (e) {
-          reject(e)
-        }
-      }))
-      .then(() => resolved(type, value, meta))
-      .catch((r) => promiseError(r, error))
+    const resolveFulfilled = ({ type, data, meta, error }) => (value) => {
+      try {
+        return (
+          Promise.resolve(dispatch(fulfilled(type, value, meta)))
+          .then(() => resolved(type, value, meta))
+          .catch((e) => new PromiseError(e, error))
+        )
+      } catch (e) {
+        return new PromiseError(e, error)
+      }
+    }
 
-    const resolveRejected = ({ type, data, meta, error }) => (reason) => (
-      new Promise((resolve, reject) => {
-        try {
-          const r = dispatch(rejected(type, reason, meta, isError(reason)))
-          return (isPromise(r))
-            ? r.then(resolve).catch(reject)
-            : resolve(r)
-        } catch (e) {
-          reject(e)
-        }
-      }))
-      .then(() => reason) // the rejected promise error
-      .catch((r) => promiseError(reason, promiseError(r, error)))
+    const resolveRejected = ({ type, data, meta, error }) => (reason) => {
+      try {
+        return (
+          Promise.resolve(dispatch(rejected(type, reason, meta, isError(reason))))
+          .then(() => reason) // the rejected promise error
+          .catch((e) => new PromiseError(reason, promiseError(e, error)))
+        )
+      } catch (e) {
+        return new PromiseError(reason, promiseError(e, error))
+      }
+    }
 
     return (next) => (action) => {
       const { payload } = action
