@@ -47,47 +47,44 @@ const getPromise = (object) => hasImplicitPromise(object) ? object : getExplicit
  * @description
  * @returns {function} thunk
  */
-export default function promiseMiddleware ({ status = defaultStatus, pendingStatus = () => undefined, fulfilledStatus = () => undefined, rejectedStatus = () => undefined } = {}) {
+export default function promiseMiddleware ({ status = defaultStatus } = {}) {
   const [
-    PENDING_STATUS,
-    FULFILLED_STATUS,
-    REJECTED_STATUS
+    PENDING,
+    FULFILLED,
+    REJECTED
   ] = status
 
-  function pending (type, payload, meta) {
-    return {
-      type: pendingStatus(type, PENDING_STATUS) || `${type}_${PENDING_STATUS}`,
-      ...(isDefined(payload) ? { payload } : {}),
-      ...(isDefined(meta) ? { meta } : {})
-    }
-  }
+  const pending = (type, payload, meta) => ({
+    type: `${type}_${PENDING}`,
+    ...(isDefined(payload) ? { payload } : {}),
+    ...(isDefined(meta) ? { meta } : {})
+  })
 
-  function fulfilled (type, payload, meta) {
-    return {
-      type: fulfilledStatus(type, FULFILLED_STATUS) || `${type}_${FULFILLED_STATUS}`,
-      ...(isPayload(payload) ? { payload } : {}),
-      ...(isDefined(meta) ? { meta } : {})
-    }
-  }
+  const fulfilled = (type, payload, meta) => ({
+    type: `${type}_${FULFILLED}`,
+    ...(isPayload(payload) ? { payload } : {}),
+    ...(isDefined(meta) ? { meta } : {})
+  })
 
-  function rejected (type, payload, meta, error) {
-    return {
-      type: rejectedStatus(type, REJECTED_STATUS) || `${type}_${REJECTED_STATUS}`,
-      ...(isPayload(payload) ? { payload } : {}),
-      ...(isDefined(meta) ? { meta } : {}),
-      ...(error ? { error } : {})
-    }
-  }
+  const rejected = (type, payload, meta, error) => ({
+    type: `${type}_${REJECTED}`,
+    ...(isPayload(payload) ? { payload } : {}),
+    ...(isDefined(meta) ? { meta } : {}),
+    ...(error ? { error } : {})
+  })
 
-  function resolved (type, payload, meta) {
-    return {
-      type,
-      ...(isPayload(payload) ? { payload } : {}),
-      ...(isDefined(meta) ? { meta } : {})
-    }
-  }
+  const resolved = (type, payload, meta) => ({
+    type,
+    ...(isPayload(payload) ? { payload } : {}),
+    ...(isDefined(meta) ? { meta } : {})
+  })
 
   return ({ dispatch }) => {
+    /**
+     *  Always: dispatches and resolves a "pending" action. This flux standard action object
+     *  describes the "pending" state of the Promise, and includes any data
+     *  (for optimistic updates) and/or meta properties from the original action
+     */
     const resolvePending = ({ type, data, meta }) => {
       try {
         return Promise.resolve(dispatch(pending(type, data, meta)))
@@ -96,6 +93,11 @@ export default function promiseMiddleware ({ status = defaultStatus, pendingStat
       }
     }
 
+    /**
+     *  Either, 1: dispatches and resolves a "fulfilled" action. This flux standard action object
+     *  describes the "fulfilled" state of the Promise, and has the resolved value
+     *  as its "payload" property, as well as the meta property of the original action
+     */
     const resolveFulfilled = ({ type, data, meta, error }) => (value) => {
       try {
         return (
@@ -108,6 +110,12 @@ export default function promiseMiddleware ({ status = defaultStatus, pendingStat
       }
     }
 
+    /**
+     *  Or, 2: dispatches and resolves a "rejected" action. This flux standard action object
+     *  describes the "rejected" state of the Promise, and has the rejected reason
+     *  as its "payload" property (which is an Error instance), as well as the meta property
+     *  of the original action
+     */
     const resolveRejected = ({ type, data, meta, error }) => (reason) => {
       try {
         return (
@@ -120,6 +128,14 @@ export default function promiseMiddleware ({ status = defaultStatus, pendingStat
       }
     }
 
+    /**
+     *  Any of the "pending", "fulfilled" or "rejected" actions might encounter their own
+     *  errors, in which case they are caught and rejected at the end of the chain. If more
+     *  than one error is encountered, they are appended as properties of the preceding
+     *  error (or, if the Promise is rejected, they are appended as properties of that
+     *  error). Assuming that none of the actions encounters an error and the Promise is
+     *  fulfilled, the original action is given to the next middleware
+     */
     return (next) => (action) => {
       const { payload } = action
 
@@ -129,11 +145,6 @@ export default function promiseMiddleware ({ status = defaultStatus, pendingStat
         const promise = getPromise(payload)
         const state = ({ type, data, meta })
 
-        /**
-         * Dispatch the pending action. This flux standard action object
-         * describes the pending state of a promise and will include any data
-         * (for optimistic updates) and/or meta from the original action.
-         */
         return resolvePending(state)
           .then(() => state)
           .catch((error) => ({ ...state, error }))
