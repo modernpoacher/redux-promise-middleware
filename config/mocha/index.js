@@ -8,8 +8,7 @@ import promiseMiddleware, {
   PromiseError
 } from '~/src'
 
-describe('Zashiki Promise Middleware:', () => {
-  let store
+describe('Zashiki Promise Middleware', () => {
   let promiseAction
 
   const foo = 'foo'
@@ -40,7 +39,7 @@ describe('Zashiki Promise Middleware:', () => {
     return (
       this.spy = sinon.spy((action) => {
         return ((action || false) instanceof Function)
-          ? action(dispatch, getState) // { dispatch, getState })
+          ? action(dispatch, getState)
           : next(action)
       })
     )
@@ -55,44 +54,48 @@ describe('Zashiki Promise Middleware:', () => {
     )
   }
 
-  function antePromisePromiseMiddleware (next) {
+  function antePromisePromiseMiddleware ({ dispatch, getState }, next) {
     return (
-      this.spy = sinon.spy((action) => Promise.resolve(next(action)))
+      this.spy = sinon.spy((action) => {
+        return ((action || false) instanceof Function)
+          ? Promise.resolve(action(dispatch, getState))
+          : Promise.resolve(next(action))
+      })
     )
   }
 
   function postPromisePromiseMiddleware (next) {
     return (
-      this.spy = sinon.spy((action) => Promise.resolve(next(action)))
+      this.spy = sinon.spy((action) => Promise.resolve({
+        ...next(action),
+        baz
+      }))
     )
   }
 
-  /*
-   * Function for creating a dumb store using fake middleware stack
-   */
   const makeStore = (config, reducer = (state = {}) => state) => applyMiddleware(
     store => next => antePromiseMiddleware.call(antePromiseMiddleware, store, next),
     promiseMiddleware(config),
     () => next => postPromiseMiddleware.call(postPromiseMiddleware, next)
   )(createStore)(reducer)
 
-  const mockStore = (config = {}) => configureStore([promiseMiddleware(config)])({})
+  const mockStore = (config = {}) => configureStore([ promiseMiddleware(config) ])({})
 
   const promStore = (config, reducer = (state = {}) => state) => applyMiddleware(
-    () => next => antePromisePromiseMiddleware.call(antePromisePromiseMiddleware, next),
+    store => next => antePromisePromiseMiddleware.call(antePromisePromiseMiddleware, store, next),
     promiseMiddleware(config),
     () => next => postPromisePromiseMiddleware.call(postPromisePromiseMiddleware, next)
   )(createStore)(reducer)
-
-  beforeEach(() => {
-    store = makeStore()
-  })
 
   afterEach(() => {
     if (antePromiseMiddleware.spy) antePromiseMiddleware.spy.reset()
     if (postPromiseMiddleware.spy) postPromiseMiddleware.spy.reset()
     if (antePromisePromiseMiddleware.spy) antePromisePromiseMiddleware.spy.reset()
     if (postPromisePromiseMiddleware.spy) postPromisePromiseMiddleware.spy.reset()
+    delete antePromiseMiddleware.spy
+    delete postPromiseMiddleware.spy
+    delete antePromisePromiseMiddleware.spy
+    delete postPromisePromiseMiddleware.spy
   })
 
   context('Always', () => {
@@ -186,18 +189,17 @@ describe('Zashiki Promise Middleware:', () => {
   })
 
   context('When the action has a promise', () => {
+    let store
+
     let pendingAction
 
     let implicitPromiseAction
-
     let explicitPromiseAction
 
     let explicitPromiseActionWithData
-
     let explicitPromiseActionWithZero
 
     let explicitPromiseActionWithMetaData
-
     let explicitPromiseActionWithMetaZero
 
     beforeEach(() => {
@@ -337,47 +339,13 @@ describe('Zashiki Promise Middleware:', () => {
     })
 
     context('When the promise is resolved', () => {
-      let pendingAction
-      let fulfilledAction
-      let rejectedAction
-
-      let implicitPromiseAction
-      let explicitPromiseAction
+      let store
 
       let implicitPromiseActionWithMetaData
       let explicitPromiseActionWithMetaData
 
       beforeEach(() => {
         store = mockStore({})
-
-        pendingAction = {
-          type: 'ACTION_PENDING'
-        }
-
-        fulfilledAction = {
-          type: 'ACTION_FULFILLED',
-          payload: promiseValue
-        }
-
-        rejectedAction = {
-          type: 'ACTION_REJECTED',
-          payload: promiseError,
-          error: true
-        }
-
-        implicitPromiseAction = {
-          type: 'ACTION',
-          payload: (
-            Promise.resolve(promiseValue)
-          )
-        }
-
-        explicitPromiseAction = {
-          type: 'ACTION',
-          payload: {
-            promise: Promise.resolve(promiseValue)
-          }
-        }
 
         implicitPromiseActionWithMetaData = {
           type: 'ACTION',
@@ -394,48 +362,6 @@ describe('Zashiki Promise Middleware:', () => {
           },
           meta: metaData
         }
-      })
-
-      it('dispatches a fulfilled action for an implicit promise payload', done => {
-        store.dispatch(implicitPromiseAction)
-          .then(() => {
-            expect(store.getActions())
-              .to.include(fulfilledAction)
-          })
-          .then(() => done(), done)
-      })
-
-      it('dispatches a fulfilled action for an explicit promise payload', done => {
-        store.dispatch(explicitPromiseAction)
-          .then(() => {
-            expect(store.getActions())
-              .to.include(fulfilledAction)
-          })
-          .then(() => done(), done)
-      })
-
-      it('returns the action for an implicit promise payload', done => {
-        store.dispatch(implicitPromiseAction)
-          .then((action) => {
-            expect(action)
-              .to.eql({
-                type: 'ACTION',
-                payload: promiseValue
-              })
-          })
-          .then(() => done(), done)
-      })
-
-      it('returns the action for an explicit promise payload', done => {
-        store.dispatch(explicitPromiseAction)
-          .then((action) => {
-            expect(action)
-              .to.eql({
-                type: 'ACTION',
-                payload: promiseValue
-              })
-          })
-          .then(() => done(), done)
       })
 
       it('sets the fulfilled action "meta" property to the action "meta" property for an implicit promise payload', done => {
@@ -465,75 +391,271 @@ describe('Zashiki Promise Middleware:', () => {
       })
 
       context('When dispatch returns a promise', () => {
-        /**
-         * If the dispatch() call fails when dispatching the _FULFILLED action
-         * (for example, errors in connected component renders()), don't change it
-         * to a promise rejection
-         */
-        it('does not dispatch a rejected action if the fulfilled action fails', done => {
-          const reducer = (state = {}, { type } = {}) => {
-            if (type === 'ACTION_FULFILLED') throw promiseError
+        let store
 
-            return ({ ...state, type })
+        let pendingAction
+        let fulfilledAction
+        let rejectedAction
+
+        let implicitPromiseAction
+        let explicitPromiseAction
+
+        beforeEach(() => {
+          store = promStore({})
+
+          pendingAction = {
+            type: 'ACTION_PENDING'
           }
 
-          store = promStore({}, reducer)
+          fulfilledAction = {
+            type: 'ACTION_FULFILLED',
+            payload: promiseValue
+          }
 
+          rejectedAction = {
+            type: 'ACTION_REJECTED',
+            payload: promiseError,
+            error: true
+          }
+
+          implicitPromiseAction = {
+            type: 'ACTION',
+            payload: (
+              Promise.resolve(promiseValue)
+            )
+          }
+
+          explicitPromiseAction = {
+            type: 'ACTION',
+            payload: {
+              promise: Promise.resolve(promiseValue)
+            }
+          }
+        })
+
+        it('dispatches a fulfilled action for an implicit promise payload', done => {
           store.dispatch(implicitPromiseAction)
-            .catch(() => {
-              expect(store.dispatch)
-                .to.have.been.calledWith(pendingAction)
-
-              expect(store.dispatch)
+            .then(() => {
+              expect(postPromisePromiseMiddleware.spy)
                 .to.have.been.calledWith(fulfilledAction)
-
-              expect(store.dispatch)
-                .not.to.have.been.calledWith(rejectedAction)
             })
             .then(() => done(), done)
+        })
+
+        it('dispatches a fulfilled action for an explicit promise payload', done => {
+          store.dispatch(explicitPromiseAction)
+            .then(() => {
+              expect(postPromisePromiseMiddleware.spy)
+                .to.have.been.calledWith(fulfilledAction)
+            })
+            .then(() => done(), done)
+        })
+
+        it('returns the action for an implicit promise payload', done => {
+          store.dispatch(implicitPromiseAction)
+            .then((action) => {
+              expect(action)
+                .to.eql({
+                  type: 'ACTION',
+                  payload: promiseValue,
+                  baz
+                })
+            })
+            .then(() => done(), done)
+        })
+
+        it('returns the action for an explicit promise payload', done => {
+          store.dispatch(explicitPromiseAction)
+            .then((action) => {
+              expect(action)
+                .to.eql({
+                  type: 'ACTION',
+                  payload: promiseValue,
+                  baz
+                })
+            })
+            .then(() => done(), done)
+        })
+
+        context('When the fulfilled action fails', () => {
+          let store
+
+          beforeEach(() => {
+            const reducer = (state = {}, { type } = {}) => {
+              if (type === 'ACTION_FULFILLED') throw promiseError
+
+              return ({ ...state, type })
+            }
+
+            store = promStore({}, reducer)
+          })
+
+          /**
+           * If the dispatch() call fails when dispatching the _FULFILLED action
+           * (for example, errors in connected component renders()), don't change it
+           * to a promise rejection
+           */
+          it('does not dispatch a rejected action for an implicit promise payload', done => {
+            store.dispatch(implicitPromiseAction)
+              .catch(() => {
+                expect(postPromisePromiseMiddleware.spy)
+                  .to.have.been.calledWith(pendingAction)
+
+                expect(postPromisePromiseMiddleware.spy)
+                  .to.have.been.calledWith(fulfilledAction)
+
+                expect(postPromisePromiseMiddleware.spy)
+                  .not.to.have.been.calledWith(rejectedAction)
+              })
+              .then(() => done(), done)
+          })
+
+          it('does not dispatch a rejected action for an explicit promise payload', done => {
+            store.dispatch(explicitPromiseAction)
+              .catch(() => {
+                expect(postPromisePromiseMiddleware.spy)
+                  .to.have.been.calledWith(pendingAction)
+
+                expect(postPromisePromiseMiddleware.spy)
+                  .to.have.been.calledWith(fulfilledAction)
+
+                expect(postPromisePromiseMiddleware.spy)
+                  .not.to.have.been.calledWith(rejectedAction)
+              })
+              .then(() => done(), done)
+          })
         })
       })
 
       context('When dispatch does not return a promise', () => {
-        /**
-         * If the dispatch() call fails when dispatching the _FULFILLED action
-         * (for example, errors in connected component renders()), don't change it
-         * to a promise rejection
-         */
-        it('does not dispatch a rejected action if the fulfilled action fails', done => {
-          const reducer = (state = {}, { type } = {}) => {
-            if (type === 'ACTION_FULFILLED') throw promiseError
+        let store
 
-            return ({ ...state, type })
+        let fulfilledAction
+        let rejectedAction
+
+        beforeEach(() => {
+          store = makeStore({})
+
+          fulfilledAction = {
+            type: 'ACTION_FULFILLED',
+            payload: promiseValue
           }
 
-          store = makeStore({}, reducer)
+          rejectedAction = {
+            type: 'ACTION_REJECTED',
+            payload: promiseError,
+            error: true
+          }
+        })
 
+        it('dispatches a fulfilled action for an implicit promise payload', done => {
           store.dispatch(implicitPromiseAction)
-            .catch(() => {
-              expect(store.dispatch)
-                .to.have.been.calledWith(pendingAction)
-
-              expect(store.dispatch)
+            .then(() => {
+              expect(postPromiseMiddleware.spy)
                 .to.have.been.calledWith(fulfilledAction)
-
-              expect(store.dispatch)
-                .not.to.have.been.calledWith(rejectedAction)
             })
             .then(() => done(), done)
+        })
+
+        it('dispatches a fulfilled action for an explicit promise payload', done => {
+          store.dispatch(explicitPromiseAction)
+            .then(() => {
+              expect(postPromiseMiddleware.spy)
+                .to.have.been.calledWith(fulfilledAction)
+            })
+            .then(() => done(), done)
+        })
+
+        it('returns the action for an implicit promise payload', done => {
+          store.dispatch(implicitPromiseAction)
+            .then((action) => {
+              expect(action)
+                .to.eql({
+                  type: 'ACTION',
+                  payload: promiseValue,
+                  baz
+                })
+            })
+            .then(() => done(), done)
+        })
+
+        it('returns the action for an explicit promise payload', done => {
+          store.dispatch(explicitPromiseAction)
+            .then((action) => {
+              expect(action)
+                .to.eql({
+                  type: 'ACTION',
+                  payload: promiseValue,
+                  baz
+                })
+            })
+            .then(() => done(), done)
+        })
+
+        context('When the fulfilled action fails', () => {
+          let store
+
+          beforeEach(() => {
+            const reducer = (state = {}, { type } = {}) => {
+              if (type === 'ACTION_FULFILLED') throw promiseError
+
+              return ({ ...state, type })
+            }
+
+            store = makeStore({}, reducer)
+          })
+
+          /**
+           * If the dispatch() call fails when dispatching the _FULFILLED action
+           * (for example, errors in connected component renders()), don't change it
+           * to a promise rejection
+           */
+          it('does not dispatch a rejected action for an implicit promise payload', done => {
+            store.dispatch(implicitPromiseAction)
+              .catch(() => {
+                expect(postPromiseMiddleware.spy)
+                  .to.have.been.calledWith(pendingAction)
+
+                expect(postPromiseMiddleware.spy)
+                  .to.have.been.calledWith(fulfilledAction)
+
+                expect(postPromiseMiddleware.spy)
+                  .not.to.have.been.calledWith(rejectedAction)
+              })
+              .then(() => done(), done)
+          })
+
+          it('does not dispatch a rejected action for an explicit promise payload', done => {
+            store.dispatch(explicitPromiseAction)
+              .catch(() => {
+                expect(postPromiseMiddleware.spy)
+                  .to.have.been.calledWith(pendingAction)
+
+                expect(postPromiseMiddleware.spy)
+                  .to.have.been.calledWith(fulfilledAction)
+
+                expect(postPromiseMiddleware.spy)
+                  .not.to.have.been.calledWith(rejectedAction)
+              })
+              .then(() => done(), done)
+          })
         })
       })
 
       context('When the resolved value is null', () => {
-        const resolveAction = {
-          type: 'ACTION',
-          payload: (
-            Promise.resolve(null)
-          )
-        }
+        let store
+
+        let resolveAction
 
         beforeEach(() => {
           store = mockStore({})
+
+          resolveAction = {
+            type: 'ACTION',
+            payload: (
+              Promise.resolve(null)
+            )
+          }
         })
 
         it('dispatches a fulfilled action', done => {
@@ -561,9 +683,13 @@ describe('Zashiki Promise Middleware:', () => {
       })
 
       context('When the resolved value is false', () => {
+        let store
+
         let implicitPromiseActionWithFalse
 
         beforeEach(() => {
+          store = mockStore({})
+
           implicitPromiseActionWithFalse = {
             type: 'ACTION',
             payload: (
@@ -599,9 +725,13 @@ describe('Zashiki Promise Middleware:', () => {
       })
 
       context('When the resolve value is zero', () => {
+        let store
+
         let implicitPromiseActionWithZero
 
         beforeEach(() => {
+          store = mockStore({})
+
           implicitPromiseActionWithZero = {
             type: 'ACTION',
             payload: (
@@ -638,6 +768,8 @@ describe('Zashiki Promise Middleware:', () => {
     })
 
     context('When the promise is rejected', () => {
+      let store
+
       let rejectedAction
 
       beforeEach(() => {
@@ -737,10 +869,17 @@ describe('Zashiki Promise Middleware:', () => {
   })
 
   context('When the action does not have a promise', () => {
-    const mockAction = { type: 'ACTION' }
+    let store
+
+    let mockAction
+
+    beforeEach(() => {
+      mockAction = { type: 'ACTION' }
+    })
 
     it('invokes the "next" middleware with the action', done => {
-      const store = makeStore() // MAKE
+      store = makeStore() // MAKE
+
       Promise.resolve(store.dispatch(mockAction))
         .then(() => {
           expect(postPromiseMiddleware.spy)
@@ -750,7 +889,8 @@ describe('Zashiki Promise Middleware:', () => {
     })
 
     it('does not dispatch any other actions', done => {
-      const store = mockStore() // MOCK
+      store = mockStore() // MOCK
+
       Promise.resolve(store.dispatch(mockAction))
         .then(() => {
           expect([mockAction])

@@ -121,7 +121,7 @@ export default function promiseMiddleware ({ status = defaultStatus, pendingStat
           const r = dispatch(rejected(type, reason, meta, isError(reason)))
           return (isPromise(r))
             ? r.then(resolve).catch(reject)
-            : resolve(r) // reject(reason))
+            : resolve(r)
         } catch (e) {
           reject(e)
         }
