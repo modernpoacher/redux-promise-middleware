@@ -102,8 +102,8 @@ export default function promiseMiddleware ({ status = defaultStatus } = {}) {
       try {
         return (
           Promise.resolve(dispatch(fulfilled(type, value, meta)))
-          .then(() => resolved(type, value, meta))
-          .catch((e) => new PromiseError(e, error))
+            .then(() => resolved(type, value, meta))
+            .catch((e) => new PromiseError(e, error))
         )
       } catch (e) {
         return new PromiseError(e, error)
@@ -120,8 +120,8 @@ export default function promiseMiddleware ({ status = defaultStatus } = {}) {
       try {
         return (
           Promise.resolve(dispatch(rejected(type, reason, meta, isError(reason))))
-          .then(() => reason) // the rejected promise error
-          .catch((e) => new PromiseError(reason, promiseError(e, error)))
+            .then(() => reason) // the rejected promise error
+            .catch((e) => new PromiseError(reason, promiseError(e, error)))
         )
       } catch (e) {
         return new PromiseError(reason, promiseError(e, error))

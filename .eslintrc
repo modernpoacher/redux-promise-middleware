@@ -6,8 +6,7 @@
     "mocha": true
   },
   "extends": [
-    "standard",
-    "plugin:react/recommended"
+    "standard"
   ],
   "parserOptions": {
     "ecmaVersion": 6,
@@ -16,12 +15,6 @@
     }
   },
   "parser": "babel-eslint",
-  "plugins": [
-    "react"
-  ],
-  "rules": {
-    "react/display-name": 0
-  },
   "globals": {
     "expect": true,
     "chai": true,
