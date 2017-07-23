@@ -18,14 +18,14 @@ describe('Zashiki Promise Middleware', () => {
   const promiseValue = foo
   const promiseError = new Error(bar)
 
-  const CUSTOM_PENDING_STATUS = 'CUSTOM_PENDING'
-  const CUSTOM_FULFILLED_STATUS = 'CUSTOM_FULFILLED'
-  const CUSTOM_REJECTED_STATUS = 'CUSTOM_REJECTED'
+  const CUSTOM_PENDING = 'CUSTOM_PENDING'
+  const CUSTOM_FULFILLED = 'CUSTOM_FULFILLED'
+  const CUSTOM_REJECTED = 'CUSTOM_REJECTED'
 
   const customStatus = [
-    CUSTOM_PENDING_STATUS,
-    CUSTOM_FULFILLED_STATUS,
-    CUSTOM_REJECTED_STATUS
+    CUSTOM_PENDING,
+    CUSTOM_FULFILLED,
+    CUSTOM_REJECTED
   ]
 
   const mockData = { foo }
@@ -133,7 +133,7 @@ describe('Zashiki Promise Middleware', () => {
       }
 
       const customAction = {
-        type: `ACTION_${CUSTOM_PENDING_STATUS}`
+        type: `ACTION_${CUSTOM_PENDING}`
       }
 
       store.dispatch(promiseAction)
@@ -153,7 +153,7 @@ describe('Zashiki Promise Middleware', () => {
       }
 
       const customAction = {
-        type: `ACTION_${CUSTOM_FULFILLED_STATUS}`,
+        type: `ACTION_${CUSTOM_FULFILLED}`,
         payload: promiseValue
       }
 
@@ -174,7 +174,7 @@ describe('Zashiki Promise Middleware', () => {
       }
 
       const customAction = {
-        type: `ACTION_${CUSTOM_REJECTED_STATUS}`,
+        type: `ACTION_${CUSTOM_REJECTED}`,
         error: true,
         payload: promiseError
       }

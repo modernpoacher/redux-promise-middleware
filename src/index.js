@@ -1,5 +1,3 @@
-/* eslint no-unsafe-finally: 0 */
-
 import { isPromiseLike as isPromise } from 'is-promise-like'
 
 export const PENDING = 'PENDING'
