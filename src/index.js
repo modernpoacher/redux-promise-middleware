@@ -20,7 +20,7 @@ export class PromiseError extends Error {
   }
 }
 
-const promiseError = (error, e) => new PromiseError(error, e)
+export const promiseError = (error, e) => new PromiseError(error, e)
 
 const defaultStatus = [
   PENDING,
@@ -79,9 +79,9 @@ export default function promiseMiddleware ({ status = defaultStatus } = {}) {
 
   return ({ dispatch }) => {
     /**
-     *  Always: dispatches and resolves a "pending" action. This flux standard action object
-     *  describes the "pending" state of the Promise, and includes any data
-     *  (for optimistic updates) and/or meta properties from the original action
+     *  Always: dispatches and resolves a "pending" action. This flux standard action
+     *  object describes the "pending" state of the Promise, and includes any data (for
+     *  optimistic updates) and/or meta properties from the original action
      */
     const resolvePending = ({ type, data, meta }) => {
       try {
@@ -92,16 +92,17 @@ export default function promiseMiddleware ({ status = defaultStatus } = {}) {
     }
 
     /**
-     *  Either, 1: dispatches and resolves a "fulfilled" action. This flux standard action object
-     *  describes the "fulfilled" state of the Promise, and has the resolved value
-     *  as its "payload" property, as well as the meta property of the original action
+     *  Either, 1: dispatches and resolves a "fulfilled" action. This flux standard
+     *  action object describes the "fulfilled" state of the Promise, and has the
+     *  resolved value as its "payload" property, as well as the meta property of the
+     *  original action
      */
     const resolveFulfilled = ({ type, data, meta, error }) => (value) => {
       try {
         return (
           Promise.resolve(dispatch(fulfilled(type, value, meta)))
             .then(() => resolved(type, value, meta))
-            .catch((e) => new PromiseError(e, error))
+            .catch((e) => (error) ? new PromiseError(error, e) : new PromiseError(e))
         )
       } catch (e) {
         return new PromiseError(e, error)
@@ -109,30 +110,31 @@ export default function promiseMiddleware ({ status = defaultStatus } = {}) {
     }
 
     /**
-     *  Or, 2: dispatches and resolves a "rejected" action. This flux standard action object
-     *  describes the "rejected" state of the Promise, and has the rejected reason
-     *  as its "payload" property (which is an Error instance), as well as the meta property
-     *  of the original action
+     *  Or, 2: dispatches and resolves a "rejected" action. This flux standard action
+     *  object describes the "rejected" state of the Promise, and has the rejected
+     *  reason as its "payload" property (which is an Error instance), as well as the
+     *  meta property of the original action
      */
     const resolveRejected = ({ type, data, meta, error }) => (reason) => {
       try {
         return (
           Promise.resolve(dispatch(rejected(type, reason, meta, isError(reason))))
             .then(() => reason) // the rejected promise error
-            .catch((e) => new PromiseError(reason, promiseError(e, error)))
+            .catch((e) => new PromiseError(reason, (error) ? new PromiseError(error, e) : new PromiseError(e)))
         )
       } catch (e) {
-        return new PromiseError(reason, promiseError(e, error))
+        return new PromiseError(reason, (error) ? new PromiseError(error, e) : new PromiseError(e))
       }
     }
 
     /**
-     *  Any of the "pending", "fulfilled" or "rejected" actions might encounter their own
-     *  errors, in which case they are caught and rejected at the end of the chain. If more
-     *  than one error is encountered, they are appended as properties of the preceding
-     *  error (or, if the Promise is rejected, they are appended as properties of that
-     *  error). Assuming that none of the actions encounters an error and the Promise is
-     *  fulfilled, the original action is given to the next middleware
+     *  Any of the "pending", "fulfilled" or "rejected" actions might encounter their
+     *  own errors, in which case they are caught and rejected at the end of the chain.
+     *  If more than one error is encountered, they are appended as properties of the
+     *  preceding error (or, if the Promise is rejected, they are appended as
+     *  properties of that error). Assuming that none of the actions encounters an
+     *  error and the Promise is fulfilled, the original action is given to the next
+     *  middleware
      */
     return (next) => (action) => {
       const { payload } = action
