@@ -139,7 +139,7 @@ describe('Zashiki Promise Middleware', () => {
       store.dispatch(promiseAction)
         .then(() => {
           expect(store.getActions())
-            .to.include(customAction)
+            .to.deep.include(customAction)
         })
         .then(() => done(), done)
     })
@@ -160,7 +160,7 @@ describe('Zashiki Promise Middleware', () => {
       store.dispatch(promiseAction)
         .then(() => {
           expect(store.getActions())
-            .to.include(customAction)
+            .to.deep.include(customAction)
         })
         .then(() => done(), done)
     })
@@ -182,7 +182,7 @@ describe('Zashiki Promise Middleware', () => {
       store.dispatch(rejectsAction)
         .catch(() => {
           expect(store.getActions())
-            .to.include(customAction)
+            .to.deep.include(customAction)
         })
         .then(() => done(), done)
     })
@@ -265,7 +265,7 @@ describe('Zashiki Promise Middleware', () => {
       store.dispatch(implicitPromiseAction)
         .then(() => {
           expect(store.getActions())
-            .to.include(pendingAction)
+            .to.deep.include(pendingAction)
         })
         .then(() => done(), done)
     })
@@ -280,7 +280,7 @@ describe('Zashiki Promise Middleware', () => {
       store.dispatch(explicitPromiseAction)
         .then(() => {
           expect(store.getActions())
-            .to.include(pendingAction)
+            .to.deep.include(pendingAction)
         })
         .then(() => done(), done)
     })
@@ -294,7 +294,7 @@ describe('Zashiki Promise Middleware', () => {
       store.dispatch(explicitPromiseActionWithData)
         .then(() => {
           expect(store.getActions())
-            .to.include(Object.assign({}, pendingAction, {
+            .to.deep.include(Object.assign({}, pendingAction, {
               payload: mockData
             }))
         })
@@ -305,7 +305,7 @@ describe('Zashiki Promise Middleware', () => {
       store.dispatch(explicitPromiseActionWithZero)
         .then(() => {
           expect(store.getActions())
-            .to.include(Object.assign({}, pendingAction, {
+            .to.deep.include(Object.assign({}, pendingAction, {
               payload: 0
             }))
         })
@@ -320,7 +320,7 @@ describe('Zashiki Promise Middleware', () => {
       store.dispatch(explicitPromiseActionWithMetaData)
         .then(() => {
           expect(store.getActions())
-            .to.include(Object.assign({}, pendingAction, {
+            .to.deep.include(Object.assign({}, pendingAction, {
               meta: metaData
             }))
         })
@@ -331,7 +331,7 @@ describe('Zashiki Promise Middleware', () => {
       store.dispatch(explicitPromiseActionWithMetaZero)
         .then(() => {
           expect(store.getActions())
-            .to.include(Object.assign({}, pendingAction, {
+            .to.deep.include(Object.assign({}, pendingAction, {
               meta: 0
             }))
         })
@@ -368,7 +368,7 @@ describe('Zashiki Promise Middleware', () => {
         store.dispatch(implicitPromiseActionWithMetaData)
           .then(() => {
             expect(store.getActions())
-              .to.include({
+              .to.deep.include({
                 type: 'ACTION_FULFILLED',
                 payload: promiseValue,
                 meta: metaData
@@ -381,7 +381,7 @@ describe('Zashiki Promise Middleware', () => {
         store.dispatch(explicitPromiseActionWithMetaData)
           .then(() => {
             expect(store.getActions())
-              .to.include({
+              .to.deep.include({
                 type: 'ACTION_FULFILLED',
                 payload: promiseValue,
                 meta: metaData
@@ -662,7 +662,7 @@ describe('Zashiki Promise Middleware', () => {
           store.dispatch(resolveAction)
             .then(() => {
               expect(store.getActions())
-                .to.include({
+                .to.deep.include({
                   type: 'ACTION_FULFILLED'
                 })
             })
@@ -702,7 +702,7 @@ describe('Zashiki Promise Middleware', () => {
           store.dispatch(implicitPromiseActionWithFalse)
             .then(() => {
               expect(store.getActions())
-                .to.include({
+                .to.deep.include({
                   type: 'ACTION_FULFILLED',
                   payload: false
                 })
@@ -744,7 +744,7 @@ describe('Zashiki Promise Middleware', () => {
           store.dispatch(implicitPromiseActionWithZero)
             .then(() => {
               expect(store.getActions())
-                .to.include({
+                .to.deep.include({
                   type: 'ACTION_FULFILLED',
                   payload: 0
                 })
@@ -793,7 +793,7 @@ describe('Zashiki Promise Middleware', () => {
         store.dispatch(implicitPromiseAction)
           .catch(() => {
             expect(store.getActions())
-              .to.include(rejectedAction)
+              .to.deep.include(rejectedAction)
           })
           .then(() => done(), done)
       })
@@ -809,7 +809,7 @@ describe('Zashiki Promise Middleware', () => {
         store.dispatch(explicitPromiseAction)
           .catch(() => {
             expect(store.getActions())
-              .to.include(rejectedAction)
+              .to.deep.include(rejectedAction)
           })
           .then(() => done(), done)
       })
