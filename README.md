@@ -25,4 +25,4 @@ To address this, Zashiki Promise Middleware extends and exports the `Error` clas
 When a Promise is rejected, the middleware returns an `Error` instance. When another error is encountered, the middleware returns a `PromiseError` instance, and appends that other error as the property `error`. In this way, all of the errors can be accessed as a chain on the instance raised to the caller.
 
 ---
-[Licensed with The MIT License (MIT)](https://raw.githubusercontent.com/pburtchaell/redux-promise-middleware/master/LICENSE) by Patrick Burtchaell.
+Copyright &copy; 2015 Patrick Burtchaell. [Licensed with The MIT License (MIT)](https://github.com/modernpoacher/Zashiki.PromiseMiddleware/blob/master/LICENSE).
