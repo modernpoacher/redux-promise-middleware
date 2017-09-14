@@ -7,11 +7,11 @@
     "prepublishOnly": "npm run build",
     "prebuild": "npm run test",
     "build": "babel src -d lib",
-    "build:watch": "babel src -d lib -w",
+    "build:watch": "npm run build -- -w",
     "pretest": "npm run lint",
     "test": "./bin/test.sh",
     "lint": "eslint src config/mocha",
-    "lint:fix": "eslint src config/mocha --fix"
+    "lint:fix": "npm run lint -- --fix"
   },
   "repository": {
     "type": "git",
