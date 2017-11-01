@@ -38,7 +38,7 @@ describe('Zashiki Promise Middleware', () => {
   function antePromiseMiddleware ({ dispatch, getState }, next) {
     return (
       this.spy = sinon.spy((action) => {
-        return ((action || false) instanceof Function)
+        return (action instanceof Function)
           ? action(dispatch, getState)
           : next(action)
       })
@@ -57,7 +57,7 @@ describe('Zashiki Promise Middleware', () => {
   function antePromisePromiseMiddleware ({ dispatch, getState }, next) {
     return (
       this.spy = sinon.spy((action) => {
-        return ((action || false) instanceof Function)
+        return (action instanceof Function)
           ? Promise.resolve(action(dispatch, getState))
           : Promise.resolve(next(action))
       })

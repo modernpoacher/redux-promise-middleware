@@ -40,6 +40,15 @@
     "url": "https://github.com/modernpoacher/Promise.Middleware/issues"
   },
   "homepage": "https://github.com/modernpoacher/Promise.Middleware",
+  "nyc": {
+    "include": [
+      "src/**/*.js"
+    ],
+    "reporter": [
+      "html"
+    ],
+    "report-dir": "config/coverage"
+  },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
@@ -58,6 +67,7 @@
     "eslint-plugin-promise": "^3.3.0",
     "eslint-plugin-standard": "^3.0.1",
     "mocha": "^3.5.0",
+    "nyc": "^11.2.1",
     "redux": "^3.7.2",
     "redux-mock-store": "^1.2.3",
     "sinon": "^3.2.1",

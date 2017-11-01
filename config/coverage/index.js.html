@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for index.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="prettify.css" />
+    <link rel="stylesheet" href="base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="index.html">All files</a> index.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">89.77% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>79/88</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">75.93% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>41/54</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">81.25% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>26/32</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">87.72% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>50/57</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">184x</span>
+<span class="cline-any cline-yes">40x</span>
+<span class="cline-any cline-yes">58x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">166x</span>
+<span class="cline-any cline-yes">138x</span>
+<span class="cline-any cline-yes">104x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">26x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">34x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">174x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">87x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">87x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">87x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">87x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">87x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">102x</span>
+<span class="cline-any cline-yes">34x</span>
+<span class="cline-any cline-yes">34x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">136x</span>
+<span class="cline-any cline-yes">28x</span>
+<span class="cline-any cline-yes">28x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">136x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">86x</span>
+<span class="cline-any cline-yes">104x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">104x</span>
+<span class="cline-any cline-yes">68x</span>
+<span class="cline-any cline-yes">34x</span>
+<span class="cline-any cline-yes">34x</span>
+<span class="cline-any cline-yes">34x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">34x</span>
+<span class="cline-any cline-yes">34x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">34x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">34x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">70x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { isPromiseLike as isPromise } from 'is-promise-like'
+&nbsp;
+export const PENDING = 'PENDING'
+export const FULFILLED = 'FULFILLED'
+export const REJECTED = 'REJECTED'
+&nbsp;
+export class PromiseError extends Error {
+  constructor ({ message, name, stack, ...error }, e) <span class="branch-1 cbranch-no" title="branch not covered" >{</span>
+    super(message)
+    Reflect
+      .ownKeys(error)
+      .forEach(<span class="fstat-no" title="function not covered" >(</span>key) =&gt; {
+<span class="cstat-no" title="statement not covered" >        this[key] = Reflect.get(error, key)</span>
+      })
+    this.name = `PromiseError(${name})`
+    this.stack = stack
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (e) {
+<span class="cstat-no" title="statement not covered" >      this.error = new PromiseError(e)</span>
+    }
+  }
+}
+&nbsp;
+export const <span class="fstat-no" title="function not covered" >promiseError = <span class="cstat-no" title="statement not covered" >(</span>error, e) =&gt; new PromiseError(error, e)</span>
+&nbsp;
+const defaultStatus = [
+  PENDING,
+  FULFILLED,
+  REJECTED
+]
+&nbsp;
+const isDefined = (value) =&gt; value !== undefined
+const isError = (value) =&gt; (value || <span class="branch-1 cbranch-no" title="branch not covered" >false) instanceof Error</span>
+const isPayload = (value) =&gt; isDefined(value) &amp;&amp; value !== null
+&nbsp;
+const hasExplicitPromise = ({ promise } = {}) =&gt; isPromise(promise)
+const hasImplicitPromise = (promise) =&gt; isPromise(promise)
+const hasPromise = (object) =&gt; hasImplicitPromise(object) || hasExplicitPromise(object)
+&nbsp;
+const getExplicitPromise = ({ promise } = <span class="branch-1 cbranch-no" title="branch not covered" >{}) =&gt; promise</span>
+const <span class="fstat-no" title="function not covered" >getImplicitPromise = <span class="cstat-no" title="statement not covered" >(</span>promise) =&gt; promise // eslint-disable-line</span>
+const getPromise = (object) =&gt; hasImplicitPromise(object) ? object : getExplicitPromise(object)
+&nbsp;
+/**
+ * @function promiseMiddleware
+ * @description
+ * @returns {function} thunk
+ */
+export default function promiseMiddleware ({ status = defaultStatus } = {}) {
+  const [
+    PENDING,
+    FULFILLED,
+    REJECTED
+  ] = status
+&nbsp;
+  const pending = (type, payload, meta) =&gt; ({
+    type: `${type}_${PENDING}`,
+    ...(isDefined(payload) ? { payload } : {}),
+    ...(isDefined(meta) ? { meta } : {})
+  })
+&nbsp;
+  const fulfilled = (type, payload, meta) =&gt; ({
+    type: `${type}_${FULFILLED}`,
+    ...(isPayload(payload) ? { payload } : {}),
+    ...(isDefined(meta) ? { meta } : {})
+  })
+&nbsp;
+  const rejected = (type, payload, meta, error) =&gt; ({
+    type: `${type}_${REJECTED}`,
+    ...(isPayload(payload) ? { payload } : <span class="branch-1 cbranch-no" title="branch not covered" >{}),</span>
+    ...(isDefined(meta) ? <span class="branch-0 cbranch-no" title="branch not covered" >{ meta } : {}),</span>
+    ...(error ? { error } : <span class="branch-1 cbranch-no" title="branch not covered" >{})</span>
+  })
+&nbsp;
+  const resolved = (type, payload, meta) =&gt; ({
+    type,
+    ...(isPayload(payload) ? { payload } : {}),
+    ...(isDefined(meta) ? { meta } : {})
+  })
+&nbsp;
+  return ({ dispatch }) =&gt; {
+    /**
+     *  Always: dispatches and resolves a "pending" action. This flux standard action
+     *  object describes the "pending" state of the Promise, and includes any data (for
+     *  optimistic updates) and/or meta properties from the original action
+     */
+    const resolvePending = ({ type, data, meta }) =&gt; {
+      try {
+        return Promise.resolve(dispatch(pending(type, data, meta)))
+      } catch (e) {
+<span class="cstat-no" title="statement not covered" >        return Promise.reject(e)</span>
+      }
+    }
+&nbsp;
+    /**
+     *  Either, 1: dispatches and resolves a "fulfilled" action. This flux standard
+     *  action object describes the "fulfilled" state of the Promise, and has the
+     *  resolved value as its "payload" property, as well as the meta property of the
+     *  original action
+     */
+    const resolveFulfilled = ({ type, data, meta, error }) =&gt; (value) =&gt; {
+      try {
+        return (
+          Promise.resolve(dispatch(fulfilled(type, value, meta)))
+            .then(() =&gt; resolved(type, value, meta))
+            .catch(<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span>e) =&gt; (error) ? new PromiseError(error, e) : new PromiseError(e))</span>
+        )
+      } catch (e) {
+        return new PromiseError(e, error)
+      }
+    }
+&nbsp;
+    /**
+     *  Or, 2: dispatches and resolves a "rejected" action. This flux standard action
+     *  object describes the "rejected" state of the Promise, and has the rejected
+     *  reason as its "payload" property (which is an Error instance), as well as the
+     *  meta property of the original action
+     */
+    const resolveRejected = ({ type, data, meta, error }) =&gt; (reason) =&gt; {
+      try {
+        return (
+          Promise.resolve(dispatch(rejected(type, reason, meta, isError(reason))))
+            .then(() =&gt; reason) // the rejected promise error
+            .catch(<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span>e) =&gt; new PromiseError(reason, (error) ? new PromiseError(error, e) : new PromiseError(e)))</span>
+        )
+      } catch (e) {
+<span class="cstat-no" title="statement not covered" >        return new PromiseError(reason, (error) ? new PromiseError(error, e) : new PromiseError(e))</span>
+      }
+    }
+&nbsp;
+    /**
+     *  Any of the "pending", "fulfilled" or "rejected" actions might encounter their
+     *  own errors, in which case they are caught and rejected at the end of the chain.
+     *  If more than one error is encountered, they are appended as properties of the
+     *  preceding error (or, if the Promise is rejected, they are appended as
+     *  properties of that error). Assuming that none of the actions encounters an
+     *  error and the Promise is fulfilled, the original action is given to the next
+     *  middleware
+     */
+    return (next) =&gt; (action) =&gt; {
+      const { payload } = action
+&nbsp;
+      if (hasPromise(payload)) {
+        const { type, meta } = action
+        const { data } = payload
+        const promise = getPromise(payload)
+        const state = ({ type, data, meta })
+&nbsp;
+        return resolvePending(state)
+          .then(() =&gt; state)
+          .catch(<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span>error) =&gt; ({ ...state, error }))</span>
+          .then((state) =&gt; (
+            promise
+              .then(resolveFulfilled(state))
+              .catch(resolveRejected(state))
+          ))
+          .then((v) =&gt; isError(v) ? Promise.reject(v) : next(v))
+      }
+&nbsp;
+      /*
+       *  Fall through
+       */
+      return next(action)
+    }
+  }
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Wed Nov 01 2017 20:33:57 GMT+0000 (GMT)
+</div>
+</div>
+<script src="prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="sorter.js"></script>
+</body>
+</html>
