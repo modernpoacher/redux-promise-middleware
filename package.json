@@ -52,7 +52,7 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
-    "babel-eslint": "^7.1.1",
+    "babel-eslint": "^8.0.1",
     "babel-loader": "^7.1.1",
     "babel-plugin-root-import": "^5.1.0",
     "babel-preset-env": "^1.6.0",
@@ -60,23 +60,23 @@
     "babel-preset-stage-0": "^6.5.0",
     "babel-preset-stage-1": "^6.24.1",
     "chai": "^4.1.1",
-    "eslint": "^4.4.1",
+    "eslint": "^4.10.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-node": "^5.1.0",
     "eslint-plugin-promise": "^3.3.0",
     "eslint-plugin-standard": "^3.0.1",
-    "mocha": "^3.5.0",
-    "nyc": "^11.2.1",
+    "mocha": "^4.0.1",
+    "nyc": "^11.3.0",
     "redux": "^3.7.2",
     "redux-mock-store": "^1.2.3",
-    "sinon": "^3.2.1",
+    "sinon": "^4.1.1",
     "sinon-chai": "^2.13.0"
   },
   "peerDependencies": {
     "redux": "^2.0.0 || ^3.0.0"
   },
   "dependencies": {
-    "is-promise-like": "^0.0.8"
+    "is-promise-like": "^0.1.0"
   }
 }
