@@ -2,7 +2,7 @@
 
 PASS="\x1B[0;32m\x20\x20✔\x1B[0m" # GREEN
 FAIL="\x1B[0;31m\x20\x20✕\x1B[0m" # RED
-MODULE="\x1B[0;90m(zashiki-routing-middleware)\x1B[0m" # GREY
+MODULE="\x1B[0;90m(zashiki-promise-middleware)\x1B[0m" # GREY
 
 if [[ $? -eq 0 ]]; then
 
