@@ -16,7 +16,7 @@ if [[ $? -eq 0 ]]; then
   echo -e "\x15" # CR
 
   npm link
-  npm run lint:fix
+  npm run test
 
   # NO CR
   echo -e $PASS $MODULE
