@@ -3,7 +3,7 @@
 execute()
 {
   nyc mocha -b \
-  --compilers js:babel-core/register \
+  --require babel-register \
   config/mocha/setup.js config/mocha/index.js
 }
 
