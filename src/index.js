@@ -85,6 +85,9 @@ export default function promiseMiddleware ({ status = defaultStatus } = {}) {
      */
     const resolvePending = ({ type, data, meta }) => {
       try {
+        /*
+         *  Errors in `dispatch()` are caught by the `try { } catch () { }`
+         */
         return Promise.resolve(dispatch(pending(type, data, meta)))
       } catch (e) {
         return Promise.reject(e)
@@ -97,8 +100,11 @@ export default function promiseMiddleware ({ status = defaultStatus } = {}) {
      *  resolved value as its "payload" property, as well as the meta property of the
      *  original action
      */
-    const resolveFulfilled = ({ type, data, meta, error }) => (value) => {
+    const resolveFulfilled = ({ type, meta, error }) => (value) => {
       try {
+        /*
+         *  Errors in `dispatch()` are caught by the `try { } catch () { }`
+         */
         return (
           Promise.resolve(dispatch(fulfilled(type, value, meta)))
             .then(() => resolved(type, value, meta))
@@ -115,8 +121,11 @@ export default function promiseMiddleware ({ status = defaultStatus } = {}) {
      *  reason as its "payload" property (which is an Error instance), as well as the
      *  meta property of the original action
      */
-    const resolveRejected = ({ type, data, meta, error }) => (reason) => {
+    const resolveRejected = ({ type, meta, error }) => (reason) => {
       try {
+        /*
+         *  Errors in `dispatch()` are caught by the `try { } catch () { }`
+         */
         return (
           Promise.resolve(dispatch(rejected(type, reason, meta, isError(reason))))
             .then(() => reason) // the rejected promise error
@@ -140,19 +149,19 @@ export default function promiseMiddleware ({ status = defaultStatus } = {}) {
       const { payload } = action
 
       if (hasPromise(payload)) {
-        const { type, meta } = action
-        const { data } = payload
-        const promise = getPromise(payload)
-        const state = ({ type, data, meta })
+        const resolvePromise = (state) => (
+          getPromise(payload)
+            .then(resolveFulfilled(state))
+            .catch(resolveRejected(state))
+        )
+
+        const { type, payload: { data }, meta } = action
+        const state = { type, data, meta }
 
         return resolvePending(state)
           .then(() => state)
           .catch((error) => ({ ...state, error }))
-          .then((state) => (
-            promise
-              .then(resolveFulfilled(state))
-              .catch(resolveRejected(state))
-          ))
+          .then(resolvePromise)
           .then((v) => isError(v) ? Promise.reject(v) : next(v))
       }
 

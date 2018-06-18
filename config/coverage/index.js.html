@@ -20,9 +20,9 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">89.77% </span>
+        <span class="strong">89.66% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>79/88</span>
+        <span class='fraction'>78/87</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">75.93% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>26/32</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">87.72% </span>
+        <span class="strong">87.27% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>50/57</span>
+        <span class='fraction'>48/55</span>
       </div>
     </div>
   </div>
@@ -208,7 +208,16 @@
 163
 164
 165
-166</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -295,6 +304,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">102x</span>
 <span class="cline-any cline-yes">34x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">34x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -307,8 +319,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">136x</span>
+<span class="cline-any cline-yes">102x</span>
 <span class="cline-any cline-yes">28x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">28x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">24x</span>
@@ -325,8 +340,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">136x</span>
+<span class="cline-any cline-yes">102x</span>
 <span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
@@ -350,18 +368,18 @@
 <span class="cline-any cline-yes">104x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">104x</span>
-<span class="cline-any cline-yes">68x</span>
 <span class="cline-any cline-yes">34x</span>
-<span class="cline-any cline-yes">34x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">102x</span>
 <span class="cline-any cline-yes">34x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">34x</span>
 <span class="cline-any cline-yes">34x</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-yes">34x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">34x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -460,6 +478,9 @@ export default function promiseMiddleware ({ status = defaultStatus } = {}) {
      */
     const resolvePending = ({ type, data, meta }) =&gt; {
       try {
+        /*
+         *  Errors in `dispatch()` are caught by the `try { } catch () { }`
+         */
         return Promise.resolve(dispatch(pending(type, data, meta)))
       } catch (e) {
 <span class="cstat-no" title="statement not covered" >        return Promise.reject(e)</span>
@@ -472,8 +493,11 @@ export default function promiseMiddleware ({ status = defaultStatus } = {}) {
      *  resolved value as its "payload" property, as well as the meta property of the
      *  original action
      */
-    const resolveFulfilled = ({ type, data, meta, error }) =&gt; (value) =&gt; {
+    const resolveFulfilled = ({ type, meta, error }) =&gt; (value) =&gt; {
       try {
+        /*
+         *  Errors in `dispatch()` are caught by the `try { } catch () { }`
+         */
         return (
           Promise.resolve(dispatch(fulfilled(type, value, meta)))
             .then(() =&gt; resolved(type, value, meta))
@@ -490,8 +514,11 @@ export default function promiseMiddleware ({ status = defaultStatus } = {}) {
      *  reason as its "payload" property (which is an Error instance), as well as the
      *  meta property of the original action
      */
-    const resolveRejected = ({ type, data, meta, error }) =&gt; (reason) =&gt; {
+    const resolveRejected = ({ type, meta, error }) =&gt; (reason) =&gt; {
       try {
+        /*
+         *  Errors in `dispatch()` are caught by the `try { } catch () { }`
+         */
         return (
           Promise.resolve(dispatch(rejected(type, reason, meta, isError(reason))))
             .then(() =&gt; reason) // the rejected promise error
@@ -515,19 +542,19 @@ export default function promiseMiddleware ({ status = defaultStatus } = {}) {
       const { payload } = action
 &nbsp;
       if (hasPromise(payload)) {
-        const { type, meta } = action
-        const { data } = payload
-        const promise = getPromise(payload)
-        const state = ({ type, data, meta })
+        const resolvePromise = (state) =&gt; (
+          getPromise(payload)
+            .then(resolveFulfilled(state))
+            .catch(resolveRejected(state))
+        )
+&nbsp;
+        const { type, meta, payload: { data } } = action
+        const state = ({ type, meta, data })
 &nbsp;
         return resolvePending(state)
           .then(() =&gt; state)
           .catch(<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span>error) =&gt; ({ ...state, error }))</span>
-          .then((state) =&gt; (
-            promise
-              .then(resolveFulfilled(state))
-              .catch(resolveRejected(state))
-          ))
+          .then(resolvePromise)
           .then((v) =&gt; isError(v) ? Promise.reject(v) : next(v))
       }
 &nbsp;
@@ -544,7 +571,7 @@ export default function promiseMiddleware ({ status = defaultStatus } = {}) {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sun Jun 17 2018 23:27:55 GMT+0100 (British Summer Time)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Mon Jun 18 2018 08:50:50 GMT+0100 (British Summer Time)
 </div>
 </div>
 <script src="prettify.js"></script>
