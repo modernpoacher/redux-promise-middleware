@@ -88,10 +88,6 @@ describe('Zashiki Promise Middleware', () => {
   )(createStore)(reducer)
 
   afterEach(() => {
-    if (antePromiseMiddleware.spy) antePromiseMiddleware.spy.reset()
-    if (postPromiseMiddleware.spy) postPromiseMiddleware.spy.reset()
-    if (antePromisePromiseMiddleware.spy) antePromisePromiseMiddleware.spy.reset()
-    if (postPromisePromiseMiddleware.spy) postPromisePromiseMiddleware.spy.reset()
     delete antePromiseMiddleware.spy
     delete postPromiseMiddleware.spy
     delete antePromisePromiseMiddleware.spy
@@ -141,7 +137,8 @@ describe('Zashiki Promise Middleware', () => {
           expect(store.getActions())
             .to.deep.include(customAction)
         })
-        .then(() => done(), done)
+        .then(done)
+        .catch(done)
     })
 
     it('configures the fulfilled action "type"', done => {
@@ -162,7 +159,8 @@ describe('Zashiki Promise Middleware', () => {
           expect(store.getActions())
             .to.deep.include(customAction)
         })
-        .then(() => done(), done)
+        .then(done)
+        .catch(done)
     })
 
     it('configures the rejected action "type"', done => {
@@ -184,7 +182,8 @@ describe('Zashiki Promise Middleware', () => {
           expect(store.getActions())
             .to.deep.include(customAction)
         })
-        .then(() => done(), done)
+        .then(done)
+        .catch(done)
     })
   })
 
@@ -267,7 +266,8 @@ describe('Zashiki Promise Middleware', () => {
           expect(store.getActions())
             .to.deep.include(pendingAction)
         })
-        .then(() => done(), done)
+        .then(done)
+        .catch(done)
     })
 
     /**
@@ -282,7 +282,8 @@ describe('Zashiki Promise Middleware', () => {
           expect(store.getActions())
             .to.deep.include(pendingAction)
         })
-        .then(() => done(), done)
+        .then(done)
+        .catch(done)
     })
 
     /**
@@ -298,7 +299,8 @@ describe('Zashiki Promise Middleware', () => {
               payload: mockData
             }))
         })
-        .then(() => done(), done)
+        .then(done)
+        .catch(done)
     })
 
     it('pending action optionally contains payload falsy "data" property', done => {
@@ -309,7 +311,8 @@ describe('Zashiki Promise Middleware', () => {
               payload: 0
             }))
         })
-        .then(() => done(), done)
+        .then(done)
+        .catch(done)
     })
 
     /**
@@ -324,7 +327,8 @@ describe('Zashiki Promise Middleware', () => {
               meta: metaData
             }))
         })
-        .then(() => done(), done)
+        .then(done)
+        .catch(done)
     })
 
     it('pending action contains falsy "meta" property', done => {
@@ -335,7 +339,8 @@ describe('Zashiki Promise Middleware', () => {
               meta: 0
             }))
         })
-        .then(() => done(), done)
+        .then(done)
+        .catch(done)
     })
 
     context('When the promise is resolved', () => {
@@ -374,7 +379,8 @@ describe('Zashiki Promise Middleware', () => {
                 meta: metaData
               })
           })
-          .then(() => done(), done)
+          .then(done)
+          .catch(done)
       })
 
       it('sets the fulfilled action "meta" property to the action "meta" property for an explicit promise payload', done => {
@@ -387,7 +393,8 @@ describe('Zashiki Promise Middleware', () => {
                 meta: metaData
               })
           })
-          .then(() => done(), done)
+          .then(done)
+          .catch(done)
       })
 
       context('When dispatch returns a promise', () => {
@@ -439,7 +446,8 @@ describe('Zashiki Promise Middleware', () => {
               expect(postPromisePromiseMiddleware.spy)
                 .to.have.been.calledWith(fulfilledAction)
             })
-            .then(() => done(), done)
+            .then(done)
+            .catch(done)
         })
 
         it('dispatches a fulfilled action for an explicit promise payload', done => {
@@ -448,7 +456,8 @@ describe('Zashiki Promise Middleware', () => {
               expect(postPromisePromiseMiddleware.spy)
                 .to.have.been.calledWith(fulfilledAction)
             })
-            .then(() => done(), done)
+            .then(done)
+            .catch(done)
         })
 
         it('returns the action for an implicit promise payload', done => {
@@ -461,7 +470,8 @@ describe('Zashiki Promise Middleware', () => {
                   baz
                 })
             })
-            .then(() => done(), done)
+            .then(done)
+            .catch(done)
         })
 
         it('returns the action for an explicit promise payload', done => {
@@ -474,7 +484,8 @@ describe('Zashiki Promise Middleware', () => {
                   baz
                 })
             })
-            .then(() => done(), done)
+            .then(done)
+            .catch(done)
         })
 
         context('When the fulfilled action fails', () => {
@@ -507,7 +518,8 @@ describe('Zashiki Promise Middleware', () => {
                 expect(postPromisePromiseMiddleware.spy)
                   .not.to.have.been.calledWith(rejectedAction)
               })
-              .then(() => done(), done)
+              .then(done)
+              .catch(done)
           })
 
           it('does not dispatch a rejected action for an explicit promise payload', done => {
@@ -522,7 +534,8 @@ describe('Zashiki Promise Middleware', () => {
                 expect(postPromisePromiseMiddleware.spy)
                   .not.to.have.been.calledWith(rejectedAction)
               })
-              .then(() => done(), done)
+              .then(done)
+              .catch(done)
           })
         })
       })
@@ -554,7 +567,8 @@ describe('Zashiki Promise Middleware', () => {
               expect(postPromiseMiddleware.spy)
                 .to.have.been.calledWith(fulfilledAction)
             })
-            .then(() => done(), done)
+            .then(done)
+            .catch(done)
         })
 
         it('dispatches a fulfilled action for an explicit promise payload', done => {
@@ -563,7 +577,8 @@ describe('Zashiki Promise Middleware', () => {
               expect(postPromiseMiddleware.spy)
                 .to.have.been.calledWith(fulfilledAction)
             })
-            .then(() => done(), done)
+            .then(done)
+            .catch(done)
         })
 
         it('returns the action for an implicit promise payload', done => {
@@ -576,7 +591,8 @@ describe('Zashiki Promise Middleware', () => {
                   baz
                 })
             })
-            .then(() => done(), done)
+            .then(done)
+            .catch(done)
         })
 
         it('returns the action for an explicit promise payload', done => {
@@ -589,7 +605,8 @@ describe('Zashiki Promise Middleware', () => {
                   baz
                 })
             })
-            .then(() => done(), done)
+            .then(done)
+            .catch(done)
         })
 
         context('When the fulfilled action fails', () => {
@@ -622,7 +639,8 @@ describe('Zashiki Promise Middleware', () => {
                 expect(postPromiseMiddleware.spy)
                   .not.to.have.been.calledWith(rejectedAction)
               })
-              .then(() => done(), done)
+              .then(done)
+              .catch(done)
           })
 
           it('does not dispatch a rejected action for an explicit promise payload', done => {
@@ -637,7 +655,8 @@ describe('Zashiki Promise Middleware', () => {
                 expect(postPromiseMiddleware.spy)
                   .not.to.have.been.calledWith(rejectedAction)
               })
-              .then(() => done(), done)
+              .then(done)
+              .catch(done)
           })
         })
       })
@@ -666,7 +685,8 @@ describe('Zashiki Promise Middleware', () => {
                   type: 'ACTION_FULFILLED'
                 })
             })
-            .then(() => done(), done)
+            .then(done)
+            .catch(done)
         })
 
         /**
@@ -678,7 +698,8 @@ describe('Zashiki Promise Middleware', () => {
               expect(payload)
                 .to.be.undefined
             })
-            .then(() => done(), done)
+            .then(done)
+            .catch(done)
         })
       })
 
@@ -707,7 +728,8 @@ describe('Zashiki Promise Middleware', () => {
                   payload: false
                 })
             })
-            .then(() => done(), done)
+            .then(done)
+            .catch(done)
         })
 
         /**
@@ -720,7 +742,8 @@ describe('Zashiki Promise Middleware', () => {
               expect(payload)
                 .to.be.false
             })
-            .then(() => done(), done)
+            .then(done)
+            .catch(done)
         })
       })
 
@@ -749,7 +772,8 @@ describe('Zashiki Promise Middleware', () => {
                   payload: 0
                 })
             })
-            .then(() => done(), done)
+            .then(done)
+            .catch(done)
         })
 
         /**
@@ -762,7 +786,8 @@ describe('Zashiki Promise Middleware', () => {
               expect(payload)
                 .to.eq(0)
             })
-            .then(() => done(), done)
+            .then(done)
+            .catch(done)
         })
       })
     })
@@ -795,7 +820,8 @@ describe('Zashiki Promise Middleware', () => {
             expect(store.getActions())
               .to.deep.include(rejectedAction)
           })
-          .then(() => done(), done)
+          .then(done)
+          .catch(done)
       })
 
       it('dispatches a rejected action for an explicit promise payload', done => {
@@ -811,7 +837,8 @@ describe('Zashiki Promise Middleware', () => {
             expect(store.getActions())
               .to.deep.include(rejectedAction)
           })
-          .then(() => done(), done)
+          .then(done)
+          .catch(done)
       })
 
       it('sets the rejected action "error" property to true', done => {
@@ -829,7 +856,8 @@ describe('Zashiki Promise Middleware', () => {
             expect(error)
               .to.be.true
           })
-          .then(() => done(), done)
+          .then(done)
+          .catch(done)
       })
 
       it('sets the rejected action "payload" property to the Error instance', done => {
@@ -847,7 +875,8 @@ describe('Zashiki Promise Middleware', () => {
             expect(error)
               .to.be.equal(promiseError)
           })
-          .then(() => done(), done)
+          .then(done)
+          .catch(done)
       })
 
       it('returns the Error instance', done => {
@@ -863,14 +892,13 @@ describe('Zashiki Promise Middleware', () => {
             expect(error)
               .to.be.an.instanceof(Error)
           })
-          .then(() => done(), done)
+          .then(done)
+          .catch(done)
       })
     })
   })
 
   context('When the action does not have a promise', () => {
-    let store
-
     let mockAction
 
     beforeEach(() => {
@@ -878,25 +906,27 @@ describe('Zashiki Promise Middleware', () => {
     })
 
     it('invokes the "next" middleware with the action', done => {
-      store = makeStore() // MAKE
+      const store = makeStore() // MAKE
 
       Promise.resolve(store.dispatch(mockAction))
         .then(() => {
           expect(postPromiseMiddleware.spy)
             .to.have.been.calledWith(mockAction)
         })
-        .then(() => done(), done)
+        .then(done)
+        .catch(done)
     })
 
     it('does not dispatch any other actions', done => {
-      store = mockStore() // MOCK
+      const store = mockStore() // MOCK
 
       Promise.resolve(store.dispatch(mockAction))
         .then(() => {
           expect([mockAction])
             .to.eql(store.getActions())
         })
-        .then(() => done(), done)
+        .then(done)
+        .catch(done)
     })
   })
 })
