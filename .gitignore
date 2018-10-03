@@ -7,3 +7,4 @@ example/build
 *.log
 .DS_Store
 .nyc_output
+config/coverage
