@@ -10,14 +10,16 @@
     "clean": "bash clean.sh",
     "babel": "babel src -d lib",
     "babel:watch": "npm run babel -- -w",
-    "pretest": "npm run lint:fix",
-    "test": "./bin/test.sh",
+    "test": "bash bin/test.sh",
     "lint": "eslint src config/mocha",
-    "lint:fix": "npm run lint -- --fix"
+    "lint:fix": "npm run lint -- --fix",
+    "deps": "deps",
+    "deps:prod": "deps --save-prod",
+    "deps:dev": "deps --save-dev"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/modernpoacher/Zashiki.PromiseMiddleware.git"
+    "url": "git+https://github.com/modernpoacher/zashiki-promise-middleware.git"
   },
   "keywords": [
     "redux",
@@ -38,9 +40,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/modernpoacher/Promise.Middleware/issues"
+    "url": "https://github.com/modernpoacher/zashiki-promise-middleware/issues"
   },
-  "homepage": "https://github.com/modernpoacher/Promise.Middleware",
+  "homepage": "https://github.com/modernpoacher/zashiki-promise-middleware",
   "nyc": {
     "include": [
       "src/**/*.js"
@@ -50,32 +52,40 @@
     ],
     "report-dir": "config/coverage"
   },
-  "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
-    "babel-eslint": "^10.0.1",
-    "babel-loader": "^8.0.4",
-    "babel-plugin-root-import": "^6.0.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1",
-    "chai": "^4.1.1",
-    "eslint": "^5.6.1",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-node": "^7.0.1",
-    "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-standard": "^4.0.0",
-    "mocha": "^5.2.0",
-    "nyc": "^13.0.1",
-    "redux-mock-store": "^1.2.3",
-    "sinon": "^6.3.5",
-    "sinon-chai": "^3.2.0"
-  },
-  "peerDependencies": {
-    "redux": "^4.0.0"
-  },
   "dependencies": {
-    "is-promise-like": "^0.1.0"
+    "is-promise-like": "^0.1.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/register": "^7.4.4",
+    "@modernpoacher/deps": "0.0.5",
+    "babel-eslint": "^10.0.1",
+    "babel-loader": "^8.0.6",
+    "babel-plugin-module-resolver": "^3.2.0",
+    "chai": "^4.2.0",
+    "core-js": "^3.1.0",
+    "eslint": "^5.16.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-import-resolver-babel-module": "^5.1.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-node": "^9.0.1",
+    "eslint-plugin-promise": "^4.1.1",
+    "eslint-plugin-react": "^7.13.0",
+    "eslint-plugin-standard": "^4.0.0",
+    "husky": "^2.3.0",
+    "mocha": "^6.1.4",
+    "nyc": "^14.1.1",
+    "redux": "^4.0.1",
+    "redux-mock-store": "^1.5.3",
+    "sinon": "^7.3.2",
+    "sinon-chai": "^3.3.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run pre-commit"
+    }
   }
 }
