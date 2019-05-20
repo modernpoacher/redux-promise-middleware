@@ -13,6 +13,7 @@
     "test": "bash bin/test.sh",
     "lint": "eslint src config/mocha",
     "lint:fix": "npm run lint -- --fix",
+    "pre-commit": "npm run lint && npm run test && npm run babel && git add lib",
     "deps": "deps",
     "deps:prod": "deps --save-prod",
     "deps:dev": "deps --save-dev"
