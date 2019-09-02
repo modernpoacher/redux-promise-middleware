@@ -79,7 +79,7 @@ describe('Zashiki Promise Middleware', () => {
     () => next => postPromiseMiddleware.call(postPromiseMiddleware, next)
   )(createStore)(reducer)
 
-  const mockStore = (config = {}) => configureStore([ promiseMiddleware(config) ])({})
+  const mockStore = (config = {}) => configureStore([promiseMiddleware(config)])({})
 
   const promStore = (config, reducer = (state = {}) => state) => applyMiddleware(
     store => next => antePromisePromiseMiddleware.call(antePromisePromiseMiddleware, store, next),
