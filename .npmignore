@@ -12,3 +12,6 @@ clean.sh
 index.sh
 
 babel.config.js
+
+bin
+config
