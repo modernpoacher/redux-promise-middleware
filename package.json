@@ -11,7 +11,7 @@
     "babel": "babel src -d lib",
     "babel:watch": "npm run babel -- -w",
     "test": "bash bin/test.sh",
-    "lint": "eslint src config/mocha",
+    "lint": "eslint src config/mocha *.js",
     "lint:fix": "npm run lint -- --fix",
     "pre-commit": "npm run lint && npm run test && npm run babel && git add lib"
   },
