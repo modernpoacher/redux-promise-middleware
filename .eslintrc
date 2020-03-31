@@ -1,17 +1,15 @@
 {
+  "extends": "standard",
   "env": {
-    "browser": true,
     "node": true,
-    "es6": true,
+    "browser": true,
+    "es2020": true,
     "mocha": true
   },
-  "extends": [
-    "standard"
-  ],
-  "parserOptions": {
-    "ecmaVersion": 6
-  },
   "parser": "babel-eslint",
+  "parserOptions": {
+    "sourceType": "module"
+  },
   "globals": {
     "expect": true,
     "chai": true,
