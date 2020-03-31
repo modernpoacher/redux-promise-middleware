@@ -8,3 +8,9 @@ example/build
 .DS_Store
 .nyc_output
 config/coverage
+
+# User-defined NPM configuration
+.npmrc
+
+# User-defined NVM configuration
+.nvmrc
