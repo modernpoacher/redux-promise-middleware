@@ -1,13 +1,14 @@
+## `zashiki-promise-middleware`
+
 # Zashiki Promise Middleware
 
-Zashiki Promise Middleware is a fork of the successful and popular [Redux Promise Middleware v4.3.0](https://github.com/pburtchaell/redux-promise-middleware/releases/tag/4.3.0) by Patrick Burtchaell, et al, and adapted for Zashiki by Modern Poacher Limited.
+Zashiki Promise Middleware is a fork of the successful and popular [Redux Promise Middleware v4.3.0](https://github.com/pburtchaell/redux-promise-middleware/releases/tag/4.3.0) by Patrick Burtchaell, et al, and adapted for Zashiki Karakuri by Modern Poacher Limited.
 
 For an introduction, you should review the [Redux Promise Middleware](https://github.com/pburtchaell/redux-promise-middleware) package and [its documentation](https://github.com/pburtchaell/redux-promise-middleware/tree/master/docs). 
 
 ## Differences
 
 When Zashiki Promise Middleware receives an action with a Promise payload, it dispatches two additional actions: a "pending" action, and then either a "fulfilled" or "rejected" action when the Promise is resolved. This is consistent with Redux Promise Middleware.
-
 
 Zashiki Promise Middleware handles errors in "pending", "fulfilled" or "rejected" actions slightly differently to Redux Promise Middleware.
 
