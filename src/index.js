@@ -1,4 +1,10 @@
+import debug from 'debug'
+
 import { isPromiseLike as isPromise } from 'is-promise-like'
+
+const log = debug('zashiki-promise-middleware')
+
+log('`zashiki-promise-middleware` is awake')
 
 export const PENDING = 'PENDING'
 export const FULFILLED = 'FULFILLED'
@@ -7,11 +13,13 @@ export const REJECTED = 'REJECTED'
 export class PromiseError extends Error {
   constructor ({ message, name, stack, ...error }, e) {
     super(message)
+
     Reflect
       .ownKeys(error)
       .forEach((key) => {
         this[key] = Reflect.get(error, key)
       })
+
     this.name = `PromiseError(${name})`
     this.stack = stack
     if (e) {

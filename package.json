@@ -4,16 +4,18 @@
   "description": "Redux Promise middleware for Zashiki",
   "main": "./index.js",
   "scripts": {
-    "prepublishOnly": "npm run babel",
+    "prepare": "cross-env NODE_ENV=production npm run build",
+    "install": "npm run prepare",
     "prebuild": "npm run clean",
     "build": "npm run babel",
+    "build:watch": "npm run babel:watch",
     "clean": "rimraf lib",
     "babel": "babel src -d lib",
     "babel:watch": "npm run babel -- -w",
-    "test": "bash bin/test.sh",
+    "test": "cross-env NODE_ENV=test bash bin/test.sh",
     "lint": "eslint src config/mocha *.js",
     "lint:fix": "npm run lint -- --fix",
-    "pre-commit": "npm run lint && npm run test && npm run babel && git add lib"
+    "pre-commit": "npm run lint && npm run test && npm run build && git add lib"
   },
   "repository": {
     "type": "git",
@@ -51,6 +53,7 @@
     "report-dir": "config/coverage"
   },
   "dependencies": {
+    "debug": "^4.1.1",
     "is-promise-like": "^0.1.5"
   },
   "devDependencies": {
@@ -63,6 +66,7 @@
     "babel-plugin-module-resolver": "^4.0.0",
     "chai": "^4.2.0",
     "core-js": "^3.6.5",
+    "cross-env": "^7.0.2",
     "eslint": "^7.3.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-import-resolver-babel-module": "^5.1.2",
