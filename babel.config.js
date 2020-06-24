@@ -4,12 +4,9 @@ const log = debug('zashiki-promise-middleware')
 
 const {
   env: {
-    DEBUG = 'zashiki-promise-middleware',
     NODE_ENV = 'development'
   }
 } = process
-
-debug.enable(DEBUG)
 
 log('`zashiki-promise-middleware` is awake')
 
