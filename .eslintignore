@@ -1,0 +1,6 @@
+.circleci
+.github
+node_modules
+bin
+lib
+config/coverage

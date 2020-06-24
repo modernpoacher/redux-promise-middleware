@@ -4,8 +4,7 @@
   "description": "Redux Promise middleware for Zashiki",
   "main": "./index.js",
   "scripts": {
-    "prepare": "cross-env NODE_ENV=production npm run build",
-    "install": "npm run prepare",
+    "prepublishOnly": "cross-env NODE_ENV=production npm run build",
     "prebuild": "npm run clean",
     "build": "npm run babel",
     "build:watch": "npm run babel:watch",
@@ -13,7 +12,7 @@
     "babel": "babel src -d lib",
     "babel:watch": "npm run babel -- -w",
     "test": "cross-env NODE_ENV=test bash bin/test.sh",
-    "lint": "eslint src config/mocha *.js",
+    "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
     "pre-commit": "npm run lint && npm run test && npm run build && git add lib"
   },
