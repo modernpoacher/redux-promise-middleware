@@ -1,6 +1,6 @@
 {
   "name": "zashiki-promise-middleware",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "Redux Promise middleware for Zashiki",
   "keywords": [
     "redux",
