@@ -2,15 +2,15 @@
 
 # Zashiki Promise Middleware
 
-Zashiki Promise Middleware is a fork of the successful and popular [Redux Promise Middleware v4.3.0](https://github.com/pburtchaell/redux-promise-middleware/releases/tag/4.3.0) by Patrick Burtchaell, et al, and adapted for Zashiki Karakuri by Modern Poacher Limited.
+*Zashiki Promise Middleware* is a fork of the successful and popular [*Redux Promise Middleware* v4.3.0](https://github.com/pburtchaell/redux-promise-middleware/releases/tag/4.3.0) by Patrick Burtchaell, et al, and adapted for *Zashiki Karakuri* by Modern Poacher Limited.
 
-For an introduction, you should review the [Redux Promise Middleware](https://github.com/pburtchaell/redux-promise-middleware) package and [its documentation](https://github.com/pburtchaell/redux-promise-middleware/tree/master/docs).
+For an introduction, you should review the *[Redux Promise Middleware](https://github.com/pburtchaell/redux-promise-middleware) package and [its documentation](https://github.com/pburtchaell/redux-promise-middleware/tree/master/docs)*.
 
 ## Differences
 
-When Zashiki Promise Middleware receives an action with a Promise payload, it dispatches two additional actions: a "pending" action, and then either a "fulfilled" or "rejected" action when the Promise is resolved. This is consistent with Redux Promise Middleware.
+When *Zashiki Promise Middleware* receives an action with a Promise payload, it dispatches two additional actions: a "pending" action, and then either a "fulfilled" or "rejected" action when the Promise is resolved. This is consistent with *Redux Promise Middleware*.
 
-Zashiki Promise Middleware handles errors in "pending", "fulfilled" or "rejected" actions slightly differently to Redux Promise Middleware.
+*Zashiki Promise Middleware* handles errors in "pending", "fulfilled" or "rejected" actions slightly differently to *Redux Promise Middleware*.
 
 Any of the additional actions may encounter errors, but they will be caught and raised only when the Promise has been fulfilled or rejected:
 
@@ -21,7 +21,7 @@ Any of the additional actions may encounter errors, but they will be caught and 
 
 It is possible for a Promise to be fulfilled yet raise an error if any of the additional actions encounter an error; similarly, it is possible for a Promise to be rejected and for any of the additional actions to encounter an error, too.
 
-To address this, Zashiki Promise Middleware extends and exports the `Error` class as `PromiseError`.
+To address this, *Zashiki Promise Middleware* extends and exports the `Error` class as `PromiseError`.
 
 When a Promise is rejected, the middleware returns an `Error` instance. When another error is encountered, the middleware returns a `PromiseError` instance, and appends that other error as the property `error`. In this way, all of the errors can be accessed as a chain on the instance raised to the caller.
 
