@@ -1,4 +1,4 @@
-## `zashiki-promise-middleware`
+## `@modernpoacher/zashiki-promise-middleware`
 
 # Zashiki Promise Middleware
 
