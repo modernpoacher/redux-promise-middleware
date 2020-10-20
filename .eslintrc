@@ -6,10 +6,18 @@
     "es2020": true,
     "mocha": true
   },
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "parserOptions": {
     "ecmaVersion": 2020,
     "sourceType": "module"
+  },
+  "plugins": [
+    "standard"
+  ],
+  "settings": {
+    "import/resolver": {
+      "babel-module": {}
+    }
   },
   "globals": {
     "expect": true,
